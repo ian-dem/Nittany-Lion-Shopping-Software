@@ -5,6 +5,7 @@ generic_bp = Blueprint("generic", __name__, url_prefix="/")
 
  # GET one row by primary key
 @generic_bp.get("/table/<table>/<pk>/")
+@generic_bp.get("/table/<table>/<pk>")
 def get_record(table, pk):
     pk_name = request.args.get("pk_name", "id")
 
@@ -67,15 +68,15 @@ def list_tables():
     # Mapping between SQL table names and blueprint route prefixes
     tables = [
         {"label": "Category",        "route": "category"},
-        {"label": "Zipcode Info",    "route": "zipcode"},        # Zipcode_Info table
+        {"label": "Zipcode_Info",    "route": "zipcode"},        # Zipcode_Info table
         {"label": "Address",         "route": "address"},
         {"label": "Tag",             "route": "tag"},
-        {"label": "Registered User", "route": "users"},          # Registered_User table
+        {"label": "Registered_User", "route": "users"},          # Registered_User table
         {"label": "Business",        "route": "business"},
         {"label": "Buyer",           "route": "buyer_table"},    # Buyer table
-        {"label": "Help Desk",       "route": "helpdesk_table"}, # Help_Desk table
+        {"label": "Help_Desk",       "route": "helpdesk_table"}, # Help_Desk table
         {"label": "Transactions",    "route": "transaction"},
-        {"label": "Credit Cards",    "route": "creditcards"},
+        {"label": "Credit_Cards",    "route": "creditcards"},
         {"label": "Product",         "route": "products"},
         {"label": "Seller",          "route": "sellers"},
         {"label": "Ticket",          "route": "tickets"},
