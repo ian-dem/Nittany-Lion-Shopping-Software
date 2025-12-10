@@ -118,6 +118,7 @@ const saveAccountChanges = async () => {
   function handleLogout() {
     localStorage.removeItem("userToken");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
     sessionStorage.clear();
     navigate("/");
   }
