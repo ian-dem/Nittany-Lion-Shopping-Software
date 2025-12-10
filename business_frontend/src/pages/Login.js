@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Register.js";
 
@@ -9,19 +8,26 @@ export default function Login() {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
 
-    try {
-        const res = await fetch("http://localhost:5000/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-        });
-        const data = await res.json();
+        try {
+            const res = await fetch("http://localhost:5000/users/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
 
-        if (data.success) {
+            const data = await res.json();
+
+            // Handle non-200 errors (fetch doesn’t throw automatically)
+            if (!res.ok) {
+                setError(data.message || "Invalid email or password.");
+                return;
+            }
+
+            // Successful login
             localStorage.setItem("userToken", data.token);
             localStorage.setItem("userEmail", email);
             localStorage.setItem("userRole", data.role);
@@ -29,15 +35,13 @@ export default function Login() {
             // Redirect based on role
             if (data.role === "helpdesk") navigate("/helpdesk");
             else if (data.role === "seller") navigate("/seller");
-            else navigate("/buyer");
-        } else {
-            setError("Invalid email or password.");
+            else if (data.role === "buyer") navigate("/buyer");
+            else setError("Unrecognized role.");
+        } catch (err) {
+            console.error("Login error:", err);
+            setError("Server error. Please try again.");
         }
-    } catch (err) {
-        console.error(err);
-        setError("Server error, please try again.");
-    }
-};
+    };
 
     return (
         <div className="App">
@@ -57,6 +61,7 @@ export default function Login() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
+
                         <input
                             type="password"
                             placeholder="Password"
@@ -64,6 +69,7 @@ export default function Login() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
+
                         <button type="submit" className="button">Login</button>
                     </form>
 
