@@ -7,10 +7,11 @@ export default function HelpDeskDashboard() {
 
   function handleLogout() {
     localStorage.removeItem("userToken");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
     sessionStorage.clear();
-
     navigate("/");
-}
+  }
 
   return (
             <div className="App">

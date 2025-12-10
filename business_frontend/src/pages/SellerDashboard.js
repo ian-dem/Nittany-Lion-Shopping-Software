@@ -62,10 +62,12 @@ export default function SellerDashboard() {
 
     // Log out logic
     function handleLogout() {
-        localStorage.removeItem("userToken");
-                sessionStorage.clear();
-        navigate("/");
-    }
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
+    sessionStorage.clear();
+    navigate("/");
+  }
 
     // Handle deletions (local until backend integrated)
    async function handleDelete(id) {
