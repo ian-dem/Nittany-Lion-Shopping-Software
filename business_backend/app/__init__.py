@@ -29,6 +29,7 @@ def create_app():
     from .routes.zipcode import zipcode_bp
     from .routes.business_analytics import business_analytics_bp
     from .routes.analytics import analytics_bp
+    from .routes.buyerdashboard import buyer_dashboard_bp
 
     from .routes.generic import generic_bp # ALWAYS LAST ALWAYS ALWAYS
 
@@ -51,6 +52,9 @@ def create_app():
     app.register_blueprint(business_analytics_bp, url_prefix="/business_analytics")
 
     
+
+    app.register_blueprint(buyer_dashboard_bp, url_prefix="/api")
+
 
 
     app.register_blueprint(generic_bp, url_prefix="/api")
