@@ -535,7 +535,7 @@ const saveAccountChanges = async () => {
         <span className="tooltip-text">Sign Out</span>
       </div>
 
-      <DashboardSwitcher />
+      {buyer && buyer.isSeller && <DashboardSwitcher />}
     </div>
   );
 }
