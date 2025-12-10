@@ -317,7 +317,7 @@ function CategoryBrowser() {
   return (
     <div className="seller-content">
 
-      <Navigation setSection={setSection} cartCount={cart.length} />
+      <Navigation setSection={setSection} cartCount={Object.keys(cart).length} />
 
       {/* --------------------------- RECOMMENDED --------------------------- */}
       {section === "recommended" && (
