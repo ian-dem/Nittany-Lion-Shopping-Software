@@ -80,6 +80,7 @@ function App() {
                 <Route path="/recordeditor" element={<EditRecord />} />
                 <Route path="/analytics/products" element={<ProductAnalytics />} />
                 <Route path="/home" element={<DefaultRedirect />} />
+                <Route path="/login" element={<DefaultRedirect />} />
                 <Route path="/analytics/business" element={<SellerAnalytics />} />
             </Routes>
         </Router>
