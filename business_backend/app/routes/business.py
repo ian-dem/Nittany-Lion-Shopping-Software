@@ -35,3 +35,35 @@ def check_business():
     except Exception as e:
         print("Database error:", e)
         return jsonify({"exists": False, "error": "Server error"}), 500
+
+
+@business_bp.get("/list")
+def list_businesses():
+    db = get_db()
+    rows = db.execute("SELECT BusinessID, BusinessName FROM Business").fetchall()
+
+    return jsonify({
+        "success": True,
+        "businesses": [dict(r) for r in rows]
+    })
+
+
+@business_bp.get("/search")
+def search_business():
+    query = request.args.get("query", "").strip()
+
+    if len(query) < 2:
+        return jsonify({"success": True, "businesses": []})
+
+    db = get_db()
+    rows = db.execute("""
+        SELECT BusinessID, BusinessName, BusinessEmail 
+        FROM Business
+        WHERE BusinessName LIKE ?
+        LIMIT 20
+    """, (f"%{query}%",)).fetchall()
+
+    return jsonify({
+        "success": True,
+        "businesses": [dict(row) for row in rows]
+    })

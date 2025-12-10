@@ -80,91 +80,141 @@ def get_user_role(email):
         print("Error fetching role:", e)
         return jsonify({"role": "error"}), 500
 
-@users_bp.route("/upgradeToSeller", methods=["POST"])
-def upgrade_to_seller():
+@users_bp.post("/upgradeToSeller")
+def upgrade_seller():
     data = request.get_json()
     email = data.get("email")
-    business_name = data.get("businessName")
-    customer_service_number = data.get("customerServiceNumber")
+    business_id = data.get("business_id")
 
-    if not email or not business_name or not customer_service_number:
-        return jsonify({"success": False, "error": "Missing required fields"}), 400
+    if not (email and business_id):
+        return jsonify({"success": False, "error": "Missing fields"}), 400
 
+    db = get_db()
+
+    # Ensure user exists
+    user = db.execute(
+        "SELECT Email FROM Registered_User WHERE Email = ?",
+        (email,)
+    ).fetchone()
+
+    if not user:
+        return jsonify({"success": False, "error": "User not found"}), 404
+
+    # Link to business
     try:
-        db = get_db()
-        cursor = db.cursor()
-
-        # check if business exists and matches phone
-        cursor.execute(
-            "SELECT BusinessID FROM Business WHERE BusinessName = ? AND Phone = ?",
-            (business_name, customer_service_number),
-        )
-        business = cursor.fetchone()
-
-        if not business:
-            return jsonify({
-                "success": False,
-                "error": "Business name and number do not match any registered business."
-            }), 400
-
-        business_id = business["BusinessID"]
-
-        # insert seller if not already exists
-        cursor.execute("SELECT * FROM Seller WHERE UserEmail = ?", (email,))
-        if cursor.fetchone():
-            return jsonify({"success": False, "error": "User is already a seller."}), 400
-
-        cursor.execute(
+        db.execute(
             "INSERT INTO Seller (BusinessID, UserEmail) VALUES (?, ?)",
-            (business_id, email),
+            (business_id, email)
         )
         db.commit()
+    except db.IntegrityError:
+        return jsonify({"success": False, "error": "Invalid business ID or user already seller"}), 400
 
-        return jsonify({"success": True}), 200
+    return jsonify({"success": True})
 
-    except Exception as e:
-        print("Upgrade to seller error:", e)
-        return jsonify({"success": False, "error": "Server error."}), 500
 
-@users_bp.route("/registerSeller", methods=["POST"])
+@users_bp.post("/registerSeller")
 def register_seller():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
-    business_name = data.get("businessName")
-    customer_service_number = data.get("customerServiceNumber")
+    business_id = data.get("business_id")
 
-    if not all([email, password, business_name, customer_service_number]):
+    if not (email and password and business_id):
         return jsonify({"success": False, "error": "Missing fields"}), 400
 
+    db = get_db()
+
+    # Create the Registered_User
     try:
-        db = get_db()
-        cursor = db.cursor()
-
-        # Validate business
-        cursor.execute(
-            "SELECT BusinessID FROM Business WHERE BusinessName = ? AND Phone = ?",
-            (business_name, customer_service_number)
+        db.execute(
+            "INSERT INTO Registered_User (Email, Password) VALUES (?, ?)",
+            (email, password)
         )
-        business = cursor.fetchone()
-        if not business:
-            return jsonify({"success": False, "error": "Business validation failed."}), 400
+    except db.IntegrityError:
+        return jsonify({"success": False, "error": "Email already exists"}), 400
 
-        business_id = business["BusinessID"]
-
-        # Add new registered user
-        cursor.execute(
-            "INSERT INTO Registered_User (Email, Password) VALUES (?, ?)", (email, password)
+    # Link user to existing business
+    try:
+        db.execute(
+            "INSERT INTO Seller (BusinessID, UserEmail) VALUES (?, ?)",
+            (business_id, email)
         )
-
-        # Add to Seller table
-        cursor.execute(
-            "INSERT INTO Seller (BusinessID, UserEmail) VALUES (?, ?)", (business_id, email)
-        )
-
         db.commit()
-        return jsonify({"success": True}), 201
+    except db.IntegrityError:
+        return jsonify({"success": False, "error": "Invalid business ID"}), 400
+
+    return jsonify({"success": True})
+
+    
+@users_bp.post("/registerUser")
+def register_user():
+    data = request.get_json()
+
+    required = ["email", "password", "fname", "lname",
+                "street_num", "streetname", "zipcode", "city", "state"]
+
+    # --- VALIDATION ---
+    for field in required:
+        if field not in data or data[field] is None or str(data[field]).strip() == "":
+            return jsonify({"success": False, "message": f"Missing field: {field}"}), 400
+
+    email = data["email"].strip()
+    password = data["password"].strip()
+    fname = data["fname"].strip()
+    lname = data["lname"].strip()
+    street_num = int(data["street_num"])
+    streetname = data["streetname"].strip()
+    zipcode = int(data["zipcode"])
+    city = data["city"].strip()
+    state = data["state"].strip()
+
+    db = get_db()
+
+    try:
+        cur = db.cursor()
+
+        # BEGIN TRANSACTION
+        cur.execute("BEGIN")
+
+        # 1. --- Insert into Registered_User ---
+        cur.execute("""
+            INSERT INTO Registered_User (Email, Password)
+            VALUES (?, ?)
+        """, (email, password))
+
+        # 2. --- Insert or Ignore Zipcode_Info ---
+        cur.execute("""
+            SELECT zipcode FROM Zipcode_Info WHERE zipcode = ?
+        """, (zipcode,))
+        existing_zip = cur.fetchone()
+
+        if existing_zip is None:
+            cur.execute("""
+                INSERT INTO Zipcode_Info (zipcode, city, state)
+                VALUES (?, ?, ?)
+            """, (zipcode, city, state))
+        # else: existing ZIP → ignore city/state, use DB values
+
+        # 3. --- Insert into Address ---
+        cur.execute("""
+            INSERT INTO Address (zipcode, street_num, streetname)
+            VALUES (?, ?, ?)
+        """, (zipcode, street_num, streetname))
+        address_id = cur.lastrowid
+
+        # 4. --- Insert into Buyer ---
+        cur.execute("""
+            INSERT INTO Buyer (BuyerEmail, address_id, FName, LName, RegistrationDate)
+            VALUES (?, ?, ?, ?, date('now'))
+        """, (email, address_id, fname, lname))
+
+        # COMMIT TRANSACTION
+        db.commit()
+
+        return jsonify({"success": True, "message": "User registered successfully!"})
 
     except Exception as e:
-        print("Register seller error:", e)
-        return jsonify({"success": False, "error": "Server error"}), 500
+        db.rollback()
+        print("Registration error:", e)
+        return jsonify({"success": False, "message": "Server error during registration."}), 500
