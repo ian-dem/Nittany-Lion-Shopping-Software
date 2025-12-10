@@ -16,7 +16,8 @@ function BuyerDashboard() {
   const [section, setSection] = useState("recommended");  // DEFAULT TAB = recommended
   const [orders, setOrders] = useState([]);
   const [recommended, setRecommended] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({});
+
   const [buyer, setBuyer] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,6 +27,15 @@ function BuyerDashboard() {
   const [showEditModal, setShowEditModal] = useState(false);
 
   const [editData, setEditData] = useState({ name: "", email: "", password: "" });
+
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [cardFormData, setCardFormData] = useState({
+      credit_card_num: "",
+      card_type: "",
+      expire_month: "",
+      expire_year: "",
+      security_code: ""
+    });
 
   // -------------------------------------------
   // Load dashboard data on mount
@@ -45,6 +55,20 @@ function BuyerDashboard() {
       .then(res => res.json())
       .then(setRecommended);
   }, [userEmail]);
+
+
+  useEffect(() => {
+  if (!userEmail) return;
+
+  fetch(`http://localhost:5000/api/card/${userEmail}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.card) {
+        setCardFormData(data.card);
+      }
+    })
+    .catch(() => {});
+}, [userEmail]);
 
 
   // -------------------------------------------
@@ -69,9 +93,45 @@ function BuyerDashboard() {
   // -------------------------------------------
   // Cart
   // -------------------------------------------
-  const addToCart = (product) => {
-    setCart([...cart, product]);
-  };
+const addToCart = (product) => {
+  setCart((prevCart) => {
+    const id = product.ProductID;
+
+    const existingQty = prevCart[id]?.Quantity || 0;
+
+    return {
+      ...prevCart,
+      [id]: {
+        ProductID: product.ProductID,
+        Name: product.Name,
+        Price: product.Price,
+        BusinessID: product.BusinessID,   // <-- REQUIRED
+        Quantity: existingQty + 1
+      }
+    };
+  });
+};
+
+
+ 
+useEffect(() => {
+  async function loadCard() {
+    const res = await fetch(`http://localhost:5000/api/card/${userEmail}`);
+    const saved = await res.json();
+
+    if (saved.success) {
+      setCardFormData({
+        credit_card_num: saved.card.credit_card_num,
+        card_type: saved.card.card_type,
+        expire_month: saved.card.expire_month,
+        expire_year: saved.card.expire_year,
+        security_code: "" // You should NOT autofill this
+      });
+    }
+  }
+
+  if (showCheckoutModal) loadCard();
+}, [showCheckoutModal]);
 
 
   // -------------------------------------------
@@ -110,7 +170,32 @@ const saveAccountChanges = async () => {
   setShowEditModal(false);
 };
 
+ // -------------------------------------------
+  // Checkout
+  // -------------------------------------------
 
+  async function handleCheckout() {
+  const userEmail = localStorage.getItem("userEmail");
+
+  const res = await fetch("http://localhost:5000/api/checkout", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      buyerEmail: userEmail,
+      cart: cart,   // the dictionary of items
+      card: cardFormData  // from checkout modal
+    })
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    setCart({});
+    alert("Order placed successfully!");
+  } else {
+    alert("Checkout failed.");
+  }
+}
 
   // -------------------------------------------
   // Logout
@@ -197,17 +282,109 @@ const saveAccountChanges = async () => {
 
       {/* --------------------------- CART --------------------------- */}
       {section === "cart" && (
-        <div className="product-list">
-          <h2>My Cart</h2>
-          {cart.length === 0 && <p>Your cart is empty.</p>}
-          {cart.map((item, index) => (
-            <div key={index} className="product-card">
-              <strong>{item.Name}</strong>
-              <p>${item.Price}</p>
+          <div className="product-list">
+            <h2>My Cart</h2>
+
+            {Object.keys(cart).length === 0 && <p>Your cart is empty.</p>}
+
+            {Object.values(cart).map((item) => (
+              <div key={item.ProductID} className="product-card">
+                <strong>{item.Name}</strong>
+                <p>${item.Price}</p>
+                <p>Qty: {item.Quantity}</p>
+              </div>
+            ))}
+
+            {Object.keys(cart).length > 0 && (
+              <button
+                className="button"
+                style={{ marginTop: "20px", width: "200px" }}
+                onClick={() => setShowCheckoutModal(true)}
+              >
+                Checkout
+              </button>
+            )}
+          </div>
+        )}
+      
+      
+
+          {/* --------------------------- CHECKOUT --------------------------- */}
+ 
+                {showCheckoutModal && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h2>Checkout</h2>
+
+                <p>Total: ${Object.keys(cart).reduce((sum, item) => sum + item.Price * item.Quantity, 0)}</p>
+
+                <form>
+                  <input
+                    type="text"
+                    placeholder="Card Number"
+                    value={cardFormData.credit_card_num}
+                    onChange={(e) =>
+                      setCardFormData({ ...cardFormData, credit_card_num: e.target.value })
+                    }
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Card Type (Visa, etc)"
+                    value={cardFormData.card_type}
+                    onChange={(e) =>
+                      setCardFormData({ ...cardFormData, card_type: e.target.value })
+                    }
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="MM"
+                    value={cardFormData.expire_month}
+                    onChange={(e) =>
+                      setCardFormData({ ...cardFormData, expire_month: e.target.value })
+                    }
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="YYYY"
+                    value={cardFormData.expire_year}
+                    onChange={(e) =>
+                      setCardFormData({ ...cardFormData, expire_year: e.target.value })
+                    }
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Security Code"
+                    value={cardFormData.security_code}
+                    onChange={(e) =>
+                      setCardFormData({ ...cardFormData, security_code: e.target.value })
+                    }
+                  />
+
+                  <button
+                    type="button"
+                    className="button"
+                    onClick={handleCheckout}
+                  >
+                    Confirm Checkout
+                  </button>
+
+                  <button
+                    type="button"
+                    className="button"
+                    style={{ backgroundColor: "gray", marginTop: "10px" }}
+                    onClick={() => setShowCheckoutModal(false)}
+                  >
+                    Cancel
+                  </button>
+                </form>
+              </div>
             </div>
-          ))}
-        </div>
-      )}
+          )}
+
 
       {/* --------------------------- ACCOUNT --------------------------- */}
       {section === "account" && (
