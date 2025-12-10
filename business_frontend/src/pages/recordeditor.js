@@ -16,7 +16,7 @@ export default function RecordEditor() {
 
   // Fetch table list
   useEffect(() => {
-    fetch("http://localhost:5000/tables")
+    fetch("http://localhost:5000/api/tables")
       .then(res => res.json())
       .then(data => {
         if (data?.tables) {
@@ -30,7 +30,7 @@ export default function RecordEditor() {
   useEffect(() => {
     if (!tableName) return;
 
-    fetch(`http://localhost:5000/columns/${tableName}`)
+    fetch(`http://localhost:5000/api/columns/${tableName}`)
       .then(res => res.json())
       .then(data => {
         if (data?.columns) {
@@ -89,7 +89,7 @@ export default function RecordEditor() {
 
   const insertRecord = async () => {
     const result = await api(
-      `http://localhost:5000/${tableRoute}`,
+      `http://localhost:5000/api/${tableRoute}`,
       "POST",
       formData
     );
@@ -100,7 +100,7 @@ export default function RecordEditor() {
     if (!pkValue) return setStatus("PK value required.");
 
     const result = await api(
-      `http://localhost:5000/${tableRoute}/${pkValue}?pk_name=${pkName}`
+      `http://localhost:5000/api/${tableRoute}/${pkValue}?pk_name=${pkName}`
     );
 
     if (result.error) setStatus(result.error);
@@ -114,7 +114,7 @@ export default function RecordEditor() {
     if (!pkValue) return setStatus("PK value required.");
 
     const result = await api(
-      `http://localhost:5000/${tableRoute}/${pkValue}?pk_name=${pkName}`,
+      `http://localhost:5000/api/table/${tableRoute}/${pkValue}?pk_name=${pkName}`,
       "PUT",
       formData
     );
@@ -126,7 +126,7 @@ export default function RecordEditor() {
     if (!pkValue) return setStatus("PK value required.");
 
     const result = await api(
-      `http://localhost:5000/${tableRoute}/${pkValue}?pk_name=${pkName}`,
+      `http://localhost:5000/api/table/${tableRoute}/${pkValue}?pk_name=${pkName}`,
       "DELETE"
     );
 

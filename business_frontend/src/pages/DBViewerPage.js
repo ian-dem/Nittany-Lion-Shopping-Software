@@ -9,7 +9,7 @@ export default function DBViewerPage() {
   // list of available tables here.
   useEffect(() => {
     // with  GET /tables
-    fetch("http://localhost:5000/tables")
+    fetch("http://localhost:5000/api/tables")
       .then(res => res.json())
       .then(data => {
         if (data.tables) setTables(data.tables);
