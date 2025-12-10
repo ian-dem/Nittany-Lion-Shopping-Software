@@ -123,15 +123,23 @@ export default function SellerDashboard() {
                             <p>No products listed yet.</p>
                         )}
                     </section>
-                    <section className="order-history">
+                   <section className="order-history">
                         <h2>Order History</h2>
                         {orders.length > 0 ? (
                             [...orders].reverse().map((o) => (
                                 <div key={o.OrderID || o.id} className="order-card">
                                     <p>
-                                        <strong>{o.product || o.ProductName}</strong> — bought by {o.buyer || o.BuyerEmail}
+                                        <strong>{o.product || o.ProductName}</strong> — bought by{" "}
+                                        {o.buyer || o.BuyerEmail}
                                     </p>
                                     <p>Total: ${o.price || o.Total}</p>
+
+                                    {/* 🏠 New Address line */}
+                                    {(o.address || o.Address) && (
+                                        <p>
+                                            <strong>Address:</strong> {o.address || o.Address}
+                                        </p>
+                                    )}
                                 </div>
                             ))
                         ) : (
@@ -160,8 +168,9 @@ export default function SellerDashboard() {
 
                 <Modal show={showListingForm} onClose={() => setShowListingForm(false)}>
                     <CreateListing
-                        onSubmit={(data) => {
-                            console.log("Listing created:", data);
+                        onSubmit={(newListing) => {
+                            console.log("Listing created:", newListing);
+                            setProducts((prev) => [...prev, newListing]);
                             setShowListingForm(false);
                         }}
                     />
