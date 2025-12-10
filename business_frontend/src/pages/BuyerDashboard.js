@@ -37,6 +37,11 @@ function BuyerDashboard() {
       security_code: ""
     });
 
+
+    const activateSellerAccount = () => {
+      navigate("/registerSeller");
+    };
+
   // -------------------------------------------
   // Load dashboard data on mount
   // -------------------------------------------
@@ -125,13 +130,14 @@ useEffect(() => {
         card_type: saved.card.card_type,
         expire_month: saved.card.expire_month,
         expire_year: saved.card.expire_year,
-        security_code: "" // You should NOT autofill this
+        security_code: ""
       });
     }
   }
 
   if (showCheckoutModal) loadCard();
-}, [showCheckoutModal]);
+}, [showCheckoutModal, userEmail]);
+
 
 
   // -------------------------------------------
@@ -409,8 +415,35 @@ const saveAccountChanges = async () => {
           >
             Edit Account
           </button>
-        </div>
-      )}
+
+          {/* ---------------- SELLER UPGRADE PANEL ---------------- */}
+          {buyer && !buyer.isSeller && (
+            <div
+              style={{
+                marginTop: "40px",
+                padding: "20px",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                backgroundColor: "#fafafa",
+              }}
+            >
+              <h3>Become a Seller</h3>
+              <p>You can activate a seller account to register products and manage a business.</p>
+
+              <button
+                className="button"
+                style={{ marginTop: "10px" }}
+                onClick={activateSellerAccount}
+              >
+                Activate Seller Account
+              </button>
+            </div>
+          )}
+        </div>   
+      )}         
+
+
+
 
       {/* --------------------------- ACCOUNT EDIT MODAL --------------------------- */}
       {showEditModal && (

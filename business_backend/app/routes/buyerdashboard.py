@@ -10,6 +10,8 @@ buyer_dashboard_bp = Blueprint("buyer_dashboard_bp", __name__)
 @buyer_dashboard_bp.get("/buyer/<email>")
 def get_buyer(email):
     db = get_db()
+
+    # Get buyer information
     row = db.execute("""
         SELECT 
             b.BuyerEmail AS email,
@@ -27,8 +29,19 @@ def get_buyer(email):
         WHERE b.BuyerEmail = ?
     """, (email,)).fetchone()
 
-    return jsonify(dict(row)) if row else ({"error": "Buyer not found"}, 404)
+    if not row:
+        return jsonify({"error": "Buyer not found"}), 404
 
+    buyer_data = dict(row)
+
+    # Check if the buyer is in the Seller table
+    seller_row = db.execute("""
+        SELECT 1 FROM Seller WHERE UserEmail = ?
+    """, (email,)).fetchone()
+
+    buyer_data["isSeller"] = bool(seller_row)
+
+    return jsonify(buyer_data)
 
 # ---------------------------------------------------
 # 2. Get Buyer Orders
