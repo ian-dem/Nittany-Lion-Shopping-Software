@@ -6,19 +6,11 @@ category_bp = Blueprint("category", __name__)
 def build_category_tree(db, parent_id=None):
     if parent_id is None:
         rows = db.execute(
-            """
-            SELECT CategoryID, CategoryName 
-            FROM Category 
-            WHERE ParentCategoryID IS NULL OR ParentCategoryID = ''
-            """
+            "SELECT CategoryID, CategoryName FROM Category WHERE ParentCategoryID IS NULL"
         ).fetchall()
     else:
         rows = db.execute(
-            """
-            SELECT CategoryID, CategoryName 
-            FROM Category 
-            WHERE ParentCategoryID = ?
-            """,
+            "SELECT CategoryID, CategoryName FROM Category WHERE ParentCategoryID = ?",
             (parent_id,)
         ).fetchall()
 
@@ -31,7 +23,6 @@ def build_category_tree(db, parent_id=None):
             "children": children
         })
     return tree
-
 
 @category_bp.get("/")
 def list_category():
