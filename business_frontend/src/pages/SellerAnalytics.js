@@ -1,28 +1,110 @@
-
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+const API = "http://localhost:5000";
 
-export default function SellerAnalytics() {
-    return (
-            <div className="App">
-            <header className="App-header">
-                <h1>Nittany Business</h1>
-                <p>Product Analytics</p>
-                <h2><Link 
-                            to="/helpdesk"
-                            className="text-blue-600 hover:underline font-medium">
-                            Return to Help Desk Dashboard
-                            </Link></h2>
-            </header>
+export default function BusinessAnalytics() {
+  const [productsPerBusiness, setProductsPerBusiness] = useState([]);
+  const [revenuePerBusiness, setRevenuePerBusiness] = useState([]);
+  const [monthlyRevenue, setMonthlyRevenue] = useState([]);
 
-            <main className="min-h-screen bg-slate-100">
-                seller analytics
+  useEffect(() => {
+    fetch(`${API}/business_analytics/products_per_business`)
+      .then(res => res.json())
+      .then(setProductsPerBusiness);
 
-            </main>
-            <footer className="App-footer">
-                © {new Date().getFullYear()} Team Progress | Penn State
-            </footer>
+    fetch(`${API}/business_analytics/revenue_per_business`)
+      .then(res => res.json())
+      .then(setRevenuePerBusiness);
 
-            </div>
+    fetch(`${API}/business_analytics/monthly_revenue`)
+      .then(res => res.json())
+      .then(setMonthlyRevenue);
+  }, []);
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Nittany Business</h1>
+        <p>Business Analytics Dashboard</p>
+        <h2>
+          <Link
+            to="/helpdesk"
+            className="text-blue-600 hover:underline font-medium"
+          >
+            Return to Help Desk Dashboard
+          </Link>
+        </h2>
+      </header>
+
+      {/* Products Per Business */}
+      <section>
+        <h2>Products Per Business</h2>
+        <table border="1" cellPadding="10">
+          <thead>
+            <tr>
+              <th>Business</th>
+              <th>Product Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productsPerBusiness.map(row => (
+              <tr key={row.BusinessID}>
+                <td>{row.BusinessName}</td>
+                <td>{row.product_count}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      {/* Revenue Per Business */}
+      <section>
+        <h2>Revenue Per Business</h2>
+        <table border="1" cellPadding="10">
+          <thead>
+            <tr>
+              <th>Business</th>
+              <th>Revenue ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {revenuePerBusiness.map(row => (
+              <tr key={row.BusinessID}>
+                <td>{row.BusinessName}</td>
+                <td>{row.revenue?.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      {/* Monthly Revenue Per Business */}
+      <section>
+        <h2>Monthly Revenue Per Business</h2>
+        <table border="1" cellPadding="10">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Business</th>
+              <th>Revenue ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {monthlyRevenue.map((row, idx) => (
+              <tr key={idx}>
+                <td>{row.month}</td>
+                <td>{row.BusinessName}</td>
+                <td>{row.revenue?.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <footer className="App-footer">
+        © {new Date().getFullYear()} Team Progress | Penn State
+      </footer>
+    </div>
   );
 }

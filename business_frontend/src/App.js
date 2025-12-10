@@ -14,6 +14,7 @@ import DBViewerPage from "./pages/DBViewerPage";
 import EditRecord from "./pages/recordeditor";
 import ProductAnalytics from "./pages/ProductAnalytics";
 import NoSellerAccess from "./pages/NoSellerAccess";
+import SellerAnalytics from "./pages/SellerAnalytics";
 
 
 const role = localStorage.getItem("userRole");
@@ -77,8 +78,9 @@ function App() {
                 <Route path="/dbviewer" element={<DBViewerPage />} />
                 <Route path="/products" element={<ProductsListPage />} />
                 <Route path="/recordeditor" element={<EditRecord />} />
-                <Route path="/productanalytics" element={<ProductAnalytics />} />
+                <Route path="/analytics/products" element={<ProductAnalytics />} />
                 <Route path="/home" element={<DefaultRedirect />} />
+                <Route path="/analytics/business" element={<SellerAnalytics />} />
             </Routes>
         </Router>
     );
