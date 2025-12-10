@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function RecordEditor() {
-  const [mode, setMode] = useState("insert"); // insert | update | delete
-  const [table, setTable] = useState("");
+  const [mode, setMode] = useState("insert");
+  const [tableRoute, setTableRoute] = useState("");   // used for CRUD URLs
+  const [tableName, setTableName] = useState("");     // actual SQL table name
   const [tables, setTables] = useState([]);
 
   const [columns, setColumns] = useState([]);
@@ -13,140 +14,128 @@ export default function RecordEditor() {
   const [formData, setFormData] = useState({});
   const [status, setStatus] = useState("");
 
-  // ----------------------------
-  // LOAD AVAILABLE TABLES (OPTIONAL)
-  // ----------------------------
+  // Fetch table list
   useEffect(() => {
-    // If you have a route like GET /tables
     fetch("http://localhost:5000/tables")
       .then(res => res.json())
       .then(data => {
-        if (data.tables) setTables(data.tables);
+        if (data?.tables) {
+          setTables(data.tables);
+        }
       })
-      .catch(() => {});
+      .catch(() => setStatus("Failed to load table list."));
   }, []);
 
-  // ----------------------------
-  // LOAD COLUMNS WHEN TABLE CHANGES
-  // ----------------------------
+  // Fetch columns when SQL table name updates
   useEffect(() => {
-    if (!table) return;
+    if (!tableName) return;
 
-    fetch(`http://localhost:5000/columns/${table}`)
+    fetch(`http://localhost:5000/columns/${tableName}`)
       .then(res => res.json())
       .then(data => {
-        if (data.columns) {
+        if (data?.columns) {
           setColumns(data.columns);
 
-          // identify PK
-          const pk = data.columns.find(c => c.pk === 1);
+          const pk = data.columns.find(c => Number(c.pk) === 1);
           setPkName(pk ? pk.name : "id");
 
-          // reset form
-          const emptyForm = {};
-          data.columns.forEach(col => (emptyForm[col.name] = ""));
-          setFormData(emptyForm);
+          const initial = {};
+          data.columns.forEach(col => (initial[col.name] = ""));
+          setFormData(initial);
         }
-      });
-  }, [table]);
+      })
+      .catch(() => setStatus("Could not load table schema."));
+  }, [tableName]);
 
-  // ----------------------------
-  // HANDLE FORM CHANGE
-  // ----------------------------
-  const handleFieldChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleSelectTable = (route) => {
+    setTableRoute(route);
+
+    const t = tables.find(tbl => tbl.route === route);
+    if (t) setTableName(t.label.replace(/ /g, "_")); 
   };
 
-  // ----------------------------
-  // PERFORM INSERT
-  // ----------------------------
-  const insertRecord = () => {
-    fetch(`http://localhost:5000/${table}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) setStatus(data.error);
-        else setStatus(`Inserted with ID ${data.id}`);
-      });
+  const handleChange = (name, value) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // ----------------------------
-  // LOAD RECORD FOR UPDATE
-  // ----------------------------
-  const loadRecord = () => {
-    fetch(`http://localhost:5000/${table}/${pkValue}?pk_name=${pkName}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) {
-          setStatus(data.error);
-        } else {
-          setFormData(data);
-          setStatus("");
-        }
-      });
+  // Ensure clean primitive data
+  const sanitize = (data) => {
+    const clean = {};
+    for (const key in data) {
+      const v = data[key];
+      clean[key] =
+        typeof v === "string" ||
+        typeof v === "number" ||
+        typeof v === "boolean" ||
+        v === null
+          ? v
+          : String(v);
+    }
+    return clean;
   };
 
-  // ----------------------------
-  // UPDATE RECORD
-  // ----------------------------
-  const updateRecord = () => {
-    fetch(`http://localhost:5000/${table}/${pkValue}?pk_name=${pkName}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) setStatus(data.error);
-        else setStatus("Record updated successfully!");
+  const api = async (url, method = "GET", body = null) => {
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: body ? { "Content-Type": "application/json" } : {},
+        body: body ? JSON.stringify(sanitize(body)) : null,
       });
+      return await res.json();
+    } catch {
+      return { error: "Network error" };
+    }
   };
 
-  // ----------------------------
-  // DELETE RECORD
-  // ----------------------------
-  const deleteRecord = () => {
-    fetch(`http://localhost:5000/${table}/${pkValue}?pk_name=${pkName}`, {
-      method: "DELETE",
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) setStatus(data.error);
-        else setStatus("Record deleted successfully!");
-      });
+  const insertRecord = async () => {
+    const result = await api(
+      `http://localhost:5000/${tableRoute}`,
+      "POST",
+      formData
+    );
+    setStatus(result.error ? result.error : `Inserted successfully (ID: ${result.id})`);
   };
 
-  // ----------------------------
-  // RENDER FIELD INPUTS
-  // ----------------------------
-  const renderFields = () => {
-    if (!columns.length) return null;
+  const loadRecord = async () => {
+    if (!pkValue) return setStatus("PK value required.");
 
-    return columns.map(col => (
-      <div key={col.name} style={{ marginBottom: "10px" }}>
-        <label style={{ marginRight: "10px" }}>{col.name}:</label>
-        <input
-          value={formData[col.name] || ""}
-          disabled={mode !== "insert" && col.pk === 1}
-          onChange={e => handleFieldChange(col.name, e.target.value)}
-          style={{ padding: "8px", width: "250px" }}
-        />
-      </div>
-    ));
+    const result = await api(
+      `http://localhost:5000/${tableRoute}/${pkValue}?pk_name=${pkName}`
+    );
+
+    if (result.error) setStatus(result.error);
+    else {
+      setFormData(sanitize(result));
+      setStatus("");
+    }
+  };
+
+  const updateRecord = async () => {
+    if (!pkValue) return setStatus("PK value required.");
+
+    const result = await api(
+      `http://localhost:5000/${tableRoute}/${pkValue}?pk_name=${pkName}`,
+      "PUT",
+      formData
+    );
+
+    setStatus(result.error ? result.error : "Record updated successfully.");
+  };
+
+  const deleteRecord = async () => {
+    if (!pkValue) return setStatus("PK value required.");
+
+    const result = await api(
+      `http://localhost:5000/${tableRoute}/${pkValue}?pk_name=${pkName}`,
+      "DELETE"
+    );
+
+    setStatus(result.error ? result.error : "Record deleted successfully.");
   };
 
   return (
     <div style={{ padding: "30px" }}>
-      <Link
-        to="/helpdesk"
-        className="text-blue-600 hover:underline font-medium"
-      >
+      <Link to="/helpdesk" className="text-blue-600 hover:underline font-medium">
         Return to Help Desk Dashboard
       </Link>
 
@@ -154,11 +143,7 @@ export default function RecordEditor() {
 
       {/* Mode selection */}
       <div style={{ marginTop: "20px" }}>
-        <select
-          value={mode}
-          onChange={e => setMode(e.target.value)}
-          style={{ padding: "10px", width: "200px" }}
-        >
+        <select value={mode} onChange={e => setMode(e.target.value)} style={{ padding: "10px", width: "200px" }}>
           <option value="insert">Insert</option>
           <option value="update">Update</option>
           <option value="delete">Delete</option>
@@ -168,63 +153,54 @@ export default function RecordEditor() {
       {/* Table selection */}
       <div style={{ marginTop: "20px" }}>
         <select
-          value={table}
-          onChange={e => setTable(e.target.value)}
-          style={{ padding: "10px", width: "250px" }}
+          value={tableRoute}
+          onChange={e => handleSelectTable(e.target.value)}
+          style={{ padding: "10px", width: "300px" }}
         >
           <option value="">Select table</option>
           {tables.map(t => (
-            <option key={t} value={t}>{t}</option>
+            <option key={t.route} value={t.route}>
+              {t.label}
+            </option>
           ))}
         </select>
       </div>
 
-      {/* PK inputs for update/delete */}
       {(mode === "update" || mode === "delete") && (
         <div style={{ marginTop: "20px" }}>
           <input
             placeholder="Primary key value"
             value={pkValue}
-            onChange={(e) => setPkValue(e.target.value)}
+            onChange={e => setPkValue(e.target.value)}
             style={{ padding: "10px", width: "200px", marginRight: "10px" }}
           />
-
           {mode === "update" && (
-            <button onClick={loadRecord} style={{ padding: "10px 20px" }}>
-              Load Record
-            </button>
+            <button onClick={loadRecord} style={{ padding: "10px 20px" }}>Load Record</button>
           )}
         </div>
       )}
 
-      {/* Fields */}
-      {mode !== "delete" && table && (
+      {mode !== "delete" && tableRoute && (
         <div style={{ marginTop: "30px" }}>
-          <h3>
-            {mode.charAt(0).toUpperCase() + mode.slice(1)} Fields
-          </h3>
-          {renderFields()}
+          <h3>{mode.charAt(0).toUpperCase() + mode.slice(1)} Fields</h3>
+          {columns.map(col => (
+            <div key={col.name} style={{ marginBottom: "10px" }}>
+              <label style={{ marginRight: "10px" }}>{col.name}</label>
+              <input
+                value={formData[col.name] || ""}
+                disabled={mode !== "insert" && Number(col.pk) === 1}
+                onChange={e => handleChange(col.name, e.target.value)}
+                style={{ padding: "8px", width: "250px" }}
+              />
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Action buttons */}
-      {mode === "insert" && (
-        <button onClick={insertRecord} style={{ padding: "10px 20px" }}>
-          Insert Record
-        </button>
-      )}
-
-      {mode === "update" && (
-        <button onClick={updateRecord} style={{ padding: "10px 20px" }}>
-          Update Record
-        </button>
-      )}
-
+      {mode === "insert" && <button onClick={insertRecord} style={{ padding: "10px 20px" }}>Insert Record</button>}
+      {mode === "update" && <button onClick={updateRecord} style={{ padding: "10px 20px" }}>Update Record</button>}
       {mode === "delete" && (
-        <button
-          onClick={deleteRecord}
-          style={{ padding: "10px 20px", marginTop: "20px", backgroundColor: "red", color: "white" }}
-        >
+        <button onClick={deleteRecord} style={{ padding: "10px 20px", backgroundColor: "red", color: "white", marginTop: "20px" }}>
           Delete Record
         </button>
       )}
