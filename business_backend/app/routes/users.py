@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.db import get_db
 import bcrypt
-
+from werkzeug.security import generate_password_hash
 
 users_bp = Blueprint("user", __name__)
 
@@ -124,6 +124,8 @@ def upgrade_seller():
 
 @users_bp.post("/registerSeller")
 def register_seller():
+    import bcrypt
+
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
@@ -132,18 +134,20 @@ def register_seller():
     if not (email and password and business_id):
         return jsonify({"success": False, "error": "Missing fields"}), 400
 
+    # --- HASH PASSWORD USING bcrypt ---
+    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    hashed_str = hashed.decode("utf-8")  # store as TEXT
+
     db = get_db()
 
-    # Create the Registered_User
     try:
         db.execute(
             "INSERT INTO Registered_User (Email, Password) VALUES (?, ?)",
-            (email, password)
+            (email, hashed_str)
         )
     except db.IntegrityError:
         return jsonify({"success": False, "error": "Email already exists"}), 400
 
-    # Link user to existing business
     try:
         db.execute(
             "INSERT INTO Seller (BusinessID, UserEmail) VALUES (?, ?)",
@@ -158,14 +162,15 @@ def register_seller():
     
 @users_bp.post("/registerUser")
 def register_user():
+    import bcrypt
+
     data = request.get_json()
 
     required = ["email", "password", "fname", "lname",
                 "street_num", "streetname", "zipcode", "city", "state"]
 
-    # --- VALIDATION ---
     for field in required:
-        if field not in data or data[field] is None or str(data[field]).strip() == "":
+        if field not in data or str(data[field]).strip() == "":
             return jsonify({"success": False, "message": f"Missing field: {field}"}), 400
 
     email = data["email"].strip()
@@ -178,47 +183,43 @@ def register_user():
     city = data["city"].strip()
     state = data["state"].strip()
 
+    # --- HASH USING bcrypt ---
+    hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    hashed_str = hashed.decode("utf-8")
+
     db = get_db()
 
     try:
         cur = db.cursor()
-
-        # BEGIN TRANSACTION
         cur.execute("BEGIN")
 
-        # 1. --- Insert into Registered_User ---
+        # 1. Registered_User with hashed password
         cur.execute("""
             INSERT INTO Registered_User (Email, Password)
             VALUES (?, ?)
-        """, (email, password))
+        """, (email, hashed_str))
 
-        # 2. --- Insert or Ignore Zipcode_Info ---
-        cur.execute("""
-            SELECT zipcode FROM Zipcode_Info WHERE zipcode = ?
-        """, (zipcode,))
-        existing_zip = cur.fetchone()
-
-        if existing_zip is None:
+        # 2. Zipcode_Info
+        cur.execute("SELECT zipcode FROM Zipcode_Info WHERE zipcode = ?", (zipcode,))
+        if cur.fetchone() is None:
             cur.execute("""
                 INSERT INTO Zipcode_Info (zipcode, city, state)
                 VALUES (?, ?, ?)
             """, (zipcode, city, state))
-        # else: existing ZIP → ignore city/state, use DB values
 
-        # 3. --- Insert into Address ---
+        # 3. Address
         cur.execute("""
             INSERT INTO Address (zipcode, street_num, streetname)
             VALUES (?, ?, ?)
         """, (zipcode, street_num, streetname))
         address_id = cur.lastrowid
 
-        # 4. --- Insert into Buyer ---
+        # 4. Buyer
         cur.execute("""
             INSERT INTO Buyer (BuyerEmail, address_id, FName, LName, RegistrationDate)
             VALUES (?, ?, ?, ?, date('now'))
         """, (email, address_id, fname, lname))
 
-        # COMMIT TRANSACTION
         db.commit()
 
         return jsonify({"success": True, "message": "User registered successfully!"})
