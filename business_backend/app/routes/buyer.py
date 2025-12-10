@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.db import get_db
 import sqlite3
+import bcrypt
 
 buyer_bp = Blueprint("buyer_table", __name__)
 
@@ -22,6 +23,10 @@ def update_buyer():
     new_fname = data.get("firstName")
     new_lname = data.get("lastName")
     new_password = data.get("password")
+
+    # --- HASH USING bcrypt ---
+    hashed = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt())
+    new_password = hashed.decode("utf-8")
 
     if not old_email:
         return jsonify({"error": "oldEmail is required"}), 400
