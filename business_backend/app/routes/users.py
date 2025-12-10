@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.db import get_db
+import bcrypt
+
 
 users_bp = Blueprint("user", __name__)
 
@@ -13,8 +15,8 @@ def list_users():
 @users_bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
-    email = data.get("email")
-    password = data.get("password")
+    email = data.get("email", "")
+    password = data.get("password", "")
 
     if not email or not password:
         return jsonify({"success": False, "message": "Missing fields"}), 400
@@ -22,22 +24,29 @@ def login():
     try:
         db = get_db()
         cursor = db.cursor()
-        cursor.execute(
-            "SELECT * FROM Registered_User WHERE Email = ? AND Password = ?",
-            (email, password),
-        )
+
+        # Fetch user by email ONLY
+        cursor.execute("SELECT * FROM Registered_User WHERE Email = ?", (email,))
         user = cursor.fetchone()
 
         if not user:
             return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
+        stored_hash = user["Password"]
+
+        # -------------------------------------------------
+        # BCRYPT PASSWORD CHECK
+        # -------------------------------------------------
+        if not bcrypt.checkpw(password.encode("utf-8"), stored_hash.encode("utf-8")):
+            return jsonify({"success": False, "message": "Invalid credentials"}), 401
+
+        # Determine role
         cursor.execute("SELECT * FROM Help_Desk WHERE HelpDeskEmail = ?", (email,))
         if cursor.fetchone():
             role = "helpdesk"
         else:
             cursor.execute("SELECT * FROM Seller WHERE UserEmail = ?", (email,))
-            seller = cursor.fetchone()
-            if seller:
+            if cursor.fetchone():
                 role = "seller"
             else:
                 cursor.execute("SELECT * FROM Buyer WHERE BuyerEmail = ?", (email,))
