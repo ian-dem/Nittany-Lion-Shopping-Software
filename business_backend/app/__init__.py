@@ -28,7 +28,7 @@ def create_app():
     from .routes.transactions import transactions_bp
     from .routes.zipcode import zipcode_bp
     
-    from app.routes.analytics import analytics_bp
+    from .routes.analytics import analytics_bp
 
     from .routes.generic import generic_bp # ALWAYS LAST ALWAYS ALWAYS
 
@@ -49,8 +49,13 @@ def create_app():
     app.register_blueprint(zipcode_bp, url_prefix="/zipcode")
     app.register_blueprint(analytics_bp, url_prefix="/analytics")
 
+    
+
 
     app.register_blueprint(generic_bp, url_prefix="/api")
 
-
+    print("---- URL MAP ----")
+    for rule in app.url_map.iter_rules():
+        print(rule, rule.methods)
+    print("---- END MAP ----")
     return app

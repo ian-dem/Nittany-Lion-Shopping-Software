@@ -4,7 +4,7 @@ from app.db import get_row, update_row, insert_row, delete_row, get_table_column
 generic_bp = Blueprint("generic", __name__, url_prefix="/")
 
  # GET one row by primary key
-@generic_bp.get("/<table>/<pk>/")
+@generic_bp.get("/table/<table>/<pk>/")
 def get_record(table, pk):
     pk_name = request.args.get("pk_name", "id")
 
@@ -16,7 +16,7 @@ def get_record(table, pk):
 
 
 # UPDATE row by primary key
-@generic_bp.put("/<table>/<pk>")
+@generic_bp.put("/table/<table>/<pk>")
 def update_record(table, pk):
     pk_name = request.args.get("pk_name", "id")
     updated_data = request.json
@@ -29,7 +29,7 @@ def update_record(table, pk):
     return jsonify({"success": True, "updated": updated_data})
 
 # INSERT new row into a table
-@generic_bp.post("/<table>")
+@generic_bp.post("/table/<table>")
 def insert_record(table):
     new_data = request.json  # The JSON body sent from React
 
@@ -41,7 +41,7 @@ def insert_record(table):
     return jsonify({"success": True, "id": inserted_id, "inserted": new_data}), 201
 
 # DELETE a row in a table
-@generic_bp.delete("/<table>/<pk>")
+@generic_bp.delete("/table/<table>/<pk>")
 def delete_record(table, pk):
     pk_name = request.args.get("pk_name", "id")
 
