@@ -66,6 +66,7 @@ def get_recommended():
             p.Price,
             p.BusinessID
         FROM Product p
+        WHERE p.Quantity > 0
         ORDER BY RANDOM()
         LIMIT 10;
     """).fetchall()
@@ -85,6 +86,7 @@ def search_products():
         SELECT ProductID, Name, Price, BusinessID
         FROM Product
         WHERE Name LIKE ?
+        AND Quantity > 0
         ORDER BY Name ASC
         LIMIT 25;
     """, (f"%{q}%",)).fetchall()
