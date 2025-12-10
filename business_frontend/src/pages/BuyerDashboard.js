@@ -152,7 +152,7 @@ const saveAccountChanges = async () => {
     password: editData.password || null
   };
 
-  const res = await fetch("/buyer_table/update", {
+  const res = await fetch("http://localhost:5000/buyer_table/update", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json"
