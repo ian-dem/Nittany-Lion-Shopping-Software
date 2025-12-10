@@ -17,6 +17,9 @@ export default function Navigation({ setSection, cartCount = 0 }) {
             <button className="button" onClick={() => setSection("account")}>
                 Account
             </button>
+            <button className="button" onClick={() => setSection("categories")}>
+                Browse Categories
+            </button>
         </div>
     );
 }

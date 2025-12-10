@@ -37,6 +37,9 @@ function BuyerDashboard() {
       security_code: ""
     });
 
+  const [categoryTree, setCategoryTree] = useState([]);
+  const [categoryProducts, setCategoryProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
     const activateSellerAccount = () => {
       navigate("/registerSeller");
@@ -117,6 +120,22 @@ const addToCart = (product) => {
   });
 };
 
+// category trees grab
+useEffect(() => {
+    fetch("http://localhost:5000/category/tree")
+      .then(res => res.json())
+      .then(data => setCategoryTree(data));
+  }, []);
+
+  // category product load
+  const loadProductsForCategory = (catId, name) => {
+  fetch(`http://localhost:5000/category/products/${catId}`)
+    .then(res => res.json())
+    .then(products => {
+      setCategoryProducts(products);
+      setSelectedCategory(name);
+    });
+};
 
  
 useEffect(() => {
@@ -214,8 +233,85 @@ const saveAccountChanges = async () => {
     navigate("/");
   }
 
+  function CategoryNode({ node, onSelect }) {
+  return (
+    <div style={{ marginLeft: "15px", marginTop: "5px" }}>
+      <div
+        style={{ cursor: "pointer", fontWeight: "bold" }}
+        onClick={() => onSelect(node.CategoryID, node.CategoryName)}
+      >
+        {node.CategoryName}
+      </div>
+
+      {node.children && node.children.length > 0 && (
+        <div style={{ marginLeft: "20px", borderLeft: "1px solid #ccc", paddingLeft: "10px" }}>
+          {node.children.map(child => (
+            <CategoryNode key={child.CategoryID} node={child} onSelect={onSelect} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CategoryBrowser() {
+  return (
+    <div className="product-list">
+      <h2>Browse by Category</h2>
+
+      {/* Category Tree */}
+      <div style={{ display: "flex", gap: "40px" }}>
+        
+        {/* LEFT SIDE — CATEGORY TREE */}
+        <div style={{ width: "40%", borderRight: "1px solid #ddd", paddingRight: "20px" }}>
+          <h3>Categories</h3>
+
+          {categoryTree.length === 0 && <p>Loading categories...</p>}
+
+          {categoryTree.map(node => (
+            <CategoryNode
+              key={node.CategoryID}
+              node={node}
+              onSelect={loadProductsForCategory}
+            />
+          ))}
+        </div>
+
+        {/* RIGHT SIDE — PRODUCTS */}
+        <div style={{ width: "60%", paddingLeft: "20px" }}>
+          <h3>
+            {selectedCategory ? `Products in ${selectedCategory}` : "Select a category"}
+          </h3>
+
+          {categoryProducts.length === 0 && selectedCategory && (
+            <p>No products found in this category.</p>
+          )}
+
+          {categoryProducts.map(p => (
+            <div key={p.ProductID} className="product-card">
+              <strong>{p.Name}</strong>
+              <p>${p.Price}</p>
+              <button className="button" onClick={() => addToCart(p)}>
+                Add to Cart
+              </button>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
 
   if (!buyer) return <p>Loading dashboard...</p>;
+
+
+  
 
 
   return (
@@ -267,6 +363,9 @@ const saveAccountChanges = async () => {
             ))}
         </div>
       )}
+
+      {/* --------------------------- CATEGORY BROWSE --------------------------- */}
+      {section === "categories" && <CategoryBrowser />}
 
       {/* --------------------------- ORDERS --------------------------- */}
       {section === "orders" && (
