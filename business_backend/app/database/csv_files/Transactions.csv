@@ -1,101 +1,101 @@
-TransactionID,Transaction_Date,Total,BuyerEmail
-10001,1/10/2024,1549.98,user1@email.com
-10002,1/15/2024,35.5,user2@email.com
-10003,1/20/2024,49.99,user3@email.com
-10004,1/25/2024,99.99,user4@email.com
-10005,1/30/2024,299,user5@email.com
-10006,2/4/2024,18,user6@email.com
-10007,2/9/2024,129.99,user7@email.com
-10008,2/14/2024,25.99,user8@email.com
-10009,2/19/2024,169.99,user9@email.com
-10010,2/24/2024,40,user10@email.com
-10011,3/1/2024,139.99,user11@email.com
-10012,3/6/2024,24.99,user12@email.com
-10013,3/11/2024,89.99,user13@email.com
-10014,3/16/2024,35,user14@email.com
-10015,3/21/2024,119,user15@email.com
-10016,3/26/2024,1499.99,user16@email.com
-10017,3/31/2024,27.99,user17@email.com
-10018,4/5/2024,29.99,user18@email.com
-10019,4/10/2024,49,user19@email.com
-10020,4/15/2024,65,user20@email.com
-10021,4/20/2024,75,user21@email.com
-10022,4/25/2024,12.5,user22@email.com
-10023,4/30/2024,45,user23@email.com
-10024,5/5/2024,2999,user24@email.com
-10025,5/10/2024,35.99,user25@email.com
-10026,5/15/2024,45,user26@email.com
-10027,5/20/2024,27.99,user27@email.com
-10028,5/25/2024,250,user28@email.com
-10029,5/30/2024,180,user29@email.com
-10030,6/4/2024,89.99,user30@email.com
-10031,6/9/2024,19.99,user31@email.com
-10032,6/14/2024,650,user32@email.com
-10033,6/19/2024,159.99,user33@email.com
-10034,6/24/2024,399,user34@email.com
-10035,6/29/2024,12.5,user35@email.com
-10036,7/4/2024,18.99,user36@email.com
-10037,7/9/2024,349.99,user37@email.com
-10038,7/14/2024,29.99,user38@email.com
-10039,7/19/2024,13.99,user39@email.com
-10040,7/24/2024,22.5,user40@email.com
-10041,7/29/2024,120,user41@email.com
-10042,8/3/2024,85,user42@email.com
-10043,8/8/2024,249.99,user43@email.com
-10044,8/13/2024,35,user44@email.com
-10045,8/18/2024,850,user45@email.com
-10046,8/23/2024,279,user46@email.com
-10047,8/28/2024,1200,user47@email.com
-10048,9/2/2024,15,user48@email.com
-10049,9/7/2024,140,user49@email.com
-10050,9/12/2024,69.99,user50@email.com
-10051,9/17/2024,59.99,user51@email.com
-10052,9/22/2024,19.5,user52@email.com
-10053,9/27/2024,49.99,user53@email.com
-10054,10/2/2024,19.99,user54@email.com
-10055,10/7/2024,40,user55@email.com
-10056,10/12/2024,60,user56@email.com
-10057,10/17/2024,45,user57@email.com
-10058,10/22/2024,19.99,user58@email.com
-10059,10/27/2024,199.99,user59@email.com
-10060,11/1/2024,89.99,user60@email.com
-10061,11/6/2024,450,user61@email.com
-10062,11/11/2024,29.99,user62@email.com
-10063,11/16/2024,1199,user63@email.com
-10064,11/21/2024,149,user64@email.com
-10065,11/26/2024,34.99,user65@email.com
-10066,12/1/2024,59.99,user66@email.com
-10067,12/6/2024,16.5,user67@email.com
-10068,12/11/2024,89.99,user68@email.com
-10069,12/16/2024,70,user69@email.com
-10070,12/21/2024,35,user70@email.com
-10071,12/26/2024,120,user71@email.com
-10072,12/31/2024,55,user72@email.com
-10073,1/5/2025,99.99,user73@email.com
-10074,1/10/2025,199,user74@email.com
-10075,1/15/2025,8.5,user75@email.com
-10076,1/20/2025,22,user76@email.com
-10077,1/25/2025,25,user77@email.com
-10078,1/30/2025,179,user78@email.com
-10079,2/4/2025,55,user79@email.com
-10080,2/9/2025,12.99,user80@email.com
-10081,2/14/2025,15.99,user1@email.com
-10082,2/19/2025,49,user2@email.com
-10083,2/24/2025,40,user3@email.com
-10084,3/1/2025,99.99,user4@email.com
-10085,3/6/2025,399,user5@email.com
-10086,3/11/2025,150,user6@email.com
-10087,3/16/2025,799,user7@email.com
-10088,3/21/2025,120,user8@email.com
-10089,3/26/2025,9.5,user9@email.com
-10090,3/31/2025,250,user10@email.com
-10091,4/5/2025,15,user11@email.com
-10092,4/10/2025,350,user12@email.com
-10093,4/15/2025,119.99,user13@email.com
-10094,4/20/2025,450,user14@email.com
-10095,4/25/2025,49,user15@email.com
-10096,4/30/2025,10,user16@email.com
-10097,5/5/2025,25,user17@email.com
-10098,5/10/2025,75,user18@email.com
-10099,5/15/2025,80,user19@email.com
-10100,5/20/2025,299,user20@email.com
+TransactionID,Transaction_Date,Total,BuyerEmail,Status
+10001,1/10/2024,1549.98,user1@email.com,complete
+10002,1/15/2024,35.5,user2@email.com,complete
+10003,1/20/2024,49.99,user3@email.com,complete
+10004,1/25/2024,99.99,user4@email.com,complete
+10005,1/30/2024,299,user5@email.com,cancelled
+10006,2/4/2024,18,user6@email.com,complete
+10007,2/9/2024,129.99,user7@email.com,complete
+10008,2/14/2024,25.99,user8@email.com,complete
+10009,2/19/2024,169.99,user9@email.com,complete
+10010,2/24/2024,40,user10@email.com,complete
+10011,3/1/2024,139.99,user11@email.com,complete
+10012,3/6/2024,24.99,user12@email.com,complete
+10013,3/11/2024,89.99,user13@email.com,complete
+10014,3/16/2024,35,user14@email.com,complete
+10015,3/21/2024,119,user15@email.com,complete
+10016,3/26/2024,1499.99,user16@email.com,cancelled
+10017,3/31/2024,27.99,user17@email.com,complete
+10018,4/5/2024,29.99,user18@email.com,complete
+10019,4/10/2024,49,user19@email.com,complete
+10020,4/15/2024,65,user20@email.com,complete
+10021,4/20/2024,75,user21@email.com,complete
+10022,4/25/2024,12.5,user22@email.com,complete
+10023,4/30/2024,45,user23@email.com,complete
+10024,5/5/2024,2999,user24@email.com,complete
+10025,5/10/2024,35.99,user25@email.com,cancelled
+10026,5/15/2024,45,user26@email.com,complete
+10027,5/20/2024,27.99,user27@email.com,complete
+10028,5/25/2024,250,user28@email.com,complete
+10029,5/30/2024,180,user29@email.com,complete
+10030,6/4/2024,89.99,user30@email.com,complete
+10031,6/9/2024,19.99,user31@email.com,complete
+10032,6/14/2024,650,user32@email.com,complete
+10033,6/19/2024,159.99,user33@email.com,complete
+10034,6/24/2024,399,user34@email.com,complete
+10035,6/29/2024,12.5,user35@email.com,complete
+10036,7/4/2024,18.99,user36@email.com,complete
+10037,7/9/2024,349.99,user37@email.com,complete
+10038,7/14/2024,29.99,user38@email.com,complete
+10039,7/19/2024,13.99,user39@email.com,cancelled
+10040,7/24/2024,22.5,user40@email.com,complete
+10041,7/29/2024,120,user41@email.com,complete
+10042,8/3/2024,85,user42@email.com,complete
+10043,8/8/2024,249.99,user43@email.com,complete
+10044,8/13/2024,35,user44@email.com,complete
+10045,8/18/2024,850,user45@email.com,complete
+10046,8/23/2024,279,user46@email.com,complete
+10047,8/28/2024,1200,user47@email.com,complete
+10048,9/2/2024,15,user48@email.com,complete
+10049,9/7/2024,140,user49@email.com,complete
+10050,9/12/2024,69.99,user50@email.com,complete
+10051,9/17/2024,59.99,user51@email.com,complete
+10052,9/22/2024,19.5,user52@email.com,complete
+10053,9/27/2024,49.99,user53@email.com,complete
+10054,10/2/2024,19.99,user54@email.com,complete
+10055,10/7/2024,40,user55@email.com,complete
+10056,10/12/2024,60,user56@email.com,complete
+10057,10/17/2024,45,user57@email.com,complete
+10058,10/22/2024,19.99,user58@email.com,complete
+10059,10/27/2024,199.99,user59@email.com,complete
+10060,11/1/2024,89.99,user60@email.com,complete
+10061,11/6/2024,450,user61@email.com,complete
+10062,11/11/2024,29.99,user62@email.com,cancelled
+10063,11/16/2024,1199,user63@email.com,complete
+10064,11/21/2024,149,user64@email.com,complete
+10065,11/26/2024,34.99,user65@email.com,complete
+10066,12/1/2024,59.99,user66@email.com,complete
+10067,12/6/2024,16.5,user67@email.com,in progress
+10068,12/11/2024,89.99,user68@email.com,in progress
+10069,12/16/2024,70,user69@email.com,in progress
+10070,12/21/2024,35,user70@email.com,in progress
+10071,12/26/2024,120,user71@email.com,in progress
+10072,12/31/2024,55,user72@email.com,in progress
+10073,1/5/2025,99.99,user73@email.com,in progress
+10074,1/10/2025,199,user74@email.com,in progress
+10075,1/15/2025,8.5,user75@email.com,in progress
+10076,1/20/2025,22,user76@email.com,in progress
+10077,1/25/2025,25,user77@email.com,in progress
+10078,1/30/2025,179,user78@email.com,in progress
+10079,2/4/2025,55,user79@email.com,in progress
+10080,2/9/2025,12.99,user80@email.com,in progress
+10081,2/14/2025,15.99,user1@email.com,in progress
+10082,2/19/2025,49,user2@email.com,in progress
+10083,2/24/2025,40,user3@email.com,in progress
+10084,3/1/2025,99.99,user4@email.com,in progress
+10085,3/6/2025,399,user5@email.com,in progress
+10086,3/11/2025,150,user6@email.com,in progress
+10087,3/16/2025,799,user7@email.com,in progress
+10088,3/21/2025,120,user8@email.com,in progress
+10089,3/26/2025,9.5,user9@email.com,in progress
+10090,3/31/2025,250,user10@email.com,in progress
+10091,4/5/2025,15,user11@email.com,in progress
+10092,4/10/2025,350,user12@email.com,in progress
+10093,4/15/2025,119.99,user13@email.com,in progress
+10094,4/20/2025,450,user14@email.com,in progress
+10095,4/25/2025,49,user15@email.com,in progress
+10096,4/30/2025,10,user16@email.com,in progress
+10097,5/5/2025,25,user17@email.com,in progress
+10098,5/10/2025,75,user18@email.com,in progress
+10099,5/15/2025,80,user19@email.com,in progress
+10100,5/20/2025,299,user20@email.com,in progress

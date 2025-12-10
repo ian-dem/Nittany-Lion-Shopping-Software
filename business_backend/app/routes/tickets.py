@@ -4,6 +4,12 @@ from datetime import datetime
 
 tickets_bp = Blueprint("tickets_bp", __name__)
 
+@tickets_bp.get("/")
+def list_tickets():
+    db = get_db()
+    rows = db.execute("SELECT * FROM Ticket").fetchall()
+    return jsonify([dict(r) for r in rows])
+
 @tickets_bp.route("/create", methods=["POST"])
 def create_ticket():
     data = request.get_json()

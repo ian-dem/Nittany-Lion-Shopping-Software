@@ -1,51 +1,51 @@
-"zipcode,city,state"
-"10001,New York,NY"
-"90001,Los Angeles,CA"
-"60601,Chicago,IL"
-"77001,Houston,TX"
-"19101,Philadelphia,PA"
-"85001,Phoenix,AZ"
-"78701,Austin,TX"
-"92101,San Diego,CA"
-"75201,Dallas,TX"
-"33101,Miami,FL"
-"30301,Atlanta,GA"
-"20001,Washington,DC"
-"02101,Boston,MA"
-"98101,Seattle,WA"
-"80201,Denver,CO"
-"97201,Portland,OR"
-"48201,Detroit,MI"
-"55401,Minneapolis,MN"
-"28201,Charlotte,NC"
-"95101,San Jose,CA"
-"21201,Baltimore,MD"
-"63101,St. Louis,MO"
-"46201,Indianapolis,IN"
-"37201,Nashville,TN"
-"43201,Columbus,OH"
-"89101,Las Vegas,NV"
-"08601,Trenton,NJ"
-"27601,Raleigh,NC"
-"99501,Anchorage,AK"
-"96801,Honolulu,HI"
-"84101,Salt Lake City,UT"
-"68101,Omaha,NE"
-"14201,Buffalo,NY"
-"15201,Pittsburgh,PA"
-"53201,Milwaukee,WI"
-"23219,Richmond,VA"
-"73101,Oklahoma City,OK"
-"35201,Birmingham,AL"
-"32201,Jacksonville,FL"
-"66101,Kansas City,KS"
-"99201,Spokane,WA"
-"83701,Boise,ID"
-"85701,Tucson,AZ"
-"18101,Allentown,PA"
-"06101,Hartford,CT"
-"40201,Louisville,KY"
-"50301,Des Moines,IA"
-"14604,Rochester,NY"
-"13202,Syracuse,NY"
-"17101,Harrisburg,PA"
+zipcode,city,state
+10001,New York,NY
+90001,Los Angeles,CA
+60601,Chicago,IL
+77001,Houston,TX
+19101,Philadelphia,PA
+85001,Phoenix,AZ
+78701,Austin,TX
+92101,San Diego,CA
+75201,Dallas,TX
+33101,Miami,FL
+30301,Atlanta,GA
+20001,Washington,DC
+02101,Boston,MA
+98101,Seattle,WA
+80201,Denver,CO
+97201,Portland,OR
+48201,Detroit,MI
+55401,Minneapolis,MN
+28201,Charlotte,NC
+95101,San Jose,CA
+21201,Baltimore,MD
+63101,St. Louis,MO
+46201,Indianapolis,IN
+37201,Nashville,TN
+43201,Columbus,OH
+89101,Las Vegas,NV
+08601,Trenton,NJ
+27601,Raleigh,NC
+99501,Anchorage,AK
+96801,Honolulu,HI
+84101,Salt Lake City,UT
+68101,Omaha,NE
+14201,Buffalo,NY
+15201,Pittsburgh,PA
+53201,Milwaukee,WI
+23219,Richmond,VA
+73101,Oklahoma City,OK
+35201,Birmingham,AL
+32201,Jacksonville,FL
+66101,Kansas City,KS
+99201,Spokane,WA
+83701,Boise,ID
+85701,Tucson,AZ
+18101,Allentown,PA
+06101,Hartford,CT
+40201,Louisville,KY
+50301,Des Moines,IA
+14604,Rochester,NY
+13202,Syracuse,NY
+17101,Harrisburg,PA

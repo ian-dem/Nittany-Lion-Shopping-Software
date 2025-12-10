@@ -100,7 +100,7 @@ export default function RecordEditor() {
     if (!pkValue) return setStatus("PK value required.");
 
     const result = await api(
-      `http://localhost:5000/api/${tableRoute}/${pkValue}?pk_name=${pkName}`
+      `http://localhost:5000/api/table/${tableRoute}/${pkValue}?pk_name=${pkName}`
     );
 
     if (result.error) setStatus(result.error);
