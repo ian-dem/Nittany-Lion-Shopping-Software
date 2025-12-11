@@ -9,6 +9,14 @@ import "../App.css";
 
 export default function SellerDashboard() {
     const navigate = useNavigate();
+    const [products, setProducts] = useState([]);
+    const [orders, setOrders] = useState([]);
+    const [showTicketForm, setShowTicketForm] = useState(false);
+    const [showListingForm, setShowListingForm] = useState(false);
+    const [editingListing, setEditingListing] = useState(null);
+    const [categoryList, setCategoryList] = useState([]);
+    const [businessID, setBusinessID] = useState(null);
+    const userEmail = localStorage.getItem("userEmail");
 
     useEffect(() => {
         const checkAccess = async () => {
@@ -17,89 +25,78 @@ export default function SellerDashboard() {
                 navigate("/noselleraccess");
                 return;
             }
-
             try {
                 const res = await fetch(`http://localhost:5000/users/role/${email}`);
                 const data = await res.json();
-                if (data.role !== "seller" && data.role !== "helpdesk") {
-                    navigate("/noaccess");
-                }
-            } catch (err) {
-                console.error("Role check failed:", err);
+                if (data.role !== "seller" && data.role !== "helpdesk") navigate("/noaccess");
+            } catch {
                 navigate("/noaccess");
             }
         };
-
         checkAccess();
     }, [navigate]);
 
-    const [products, setProducts] = useState([]);
-    const [orders, setOrders] = useState([]);
-    const [showTicketForm, setShowTicketForm] = useState(false);
-    const [showListingForm, setShowListingForm] = useState(false);
-    const [editingListing, setEditingListing] = useState(null);
-
-    const userEmail = localStorage.getItem("userEmail");
-
-    // Fetch seller data
     useEffect(() => {
+        const fetchInfo = async () => {
+            try {
+                if (userEmail) {
+                    const bRes = await fetch(`http://localhost:5000/sellers/${userEmail}`);
+                    const bData = await bRes.json();
+                    if (bData.BusinessID) {
+                        setBusinessID(bData.BusinessID);
+                        localStorage.setItem("businessID", bData.BusinessID);
+                    }
+                    const catRes = await fetch("http://localhost:5000/category/categories");
+                    const catData = await catRes.json();
+                    setCategoryList(catData || []);
+                }
+            } catch (err) {
+                console.error("Init fetch error:", err);
+            }
+        };
+        fetchInfo();
+    }, [userEmail]);
+        useEffect(() => {
         const fetchData = async () => {
             try {
                 const prodRes = await fetch(`http://localhost:5000/products/seller/${userEmail}`);
                 const productData = await prodRes.json();
                 setProducts(productData);
-
                 const orderRes = await fetch(`http://localhost:5000/orders/seller/${userEmail}`);
                 const orderData = await orderRes.json();
                 setOrders(orderData);
             } catch (err) {
-                console.error("Error fetching data:", err);
+                console.error("Error fetching:", err);
             }
         };
-
         if (userEmail) fetchData();
     }, [userEmail]);
 
-    // Log out logic
     function handleLogout() {
-    localStorage.removeItem("userToken");
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("userEmail");
-    sessionStorage.clear();
-    navigate("/");
-  }
-
-    // Handle deletions (local until backend integrated)
-   async function handleDelete(id) {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
-
-    try {
-        const res = await fetch(`http://localhost:5000/products/delete/${id}`, {
-            method: "DELETE",
-        });
-
-        const data = await res.json();
-        if (res.ok && data.success) {
-            alert("Listing deleted successfully!");
-            setProducts(prev => prev.filter(prod => prod.ProductID !== id));
-        } else {
-            alert(data.error || "Failed to delete listing.");
-        }
-    } catch (err) {
-        console.error("Delete error:", err);
-        alert("Server error, please try again later.");
+        localStorage.clear();
+        sessionStorage.clear();
+        navigate("/");
     }
-}
 
-    // function handleDeleteConfirmed() {
-    //     setProducts(prev => prev.filter(p => p.id !== selectedListing.id));
-    //     setShowDeleteConfirm(false);
-    // }
+    async function handleDelete(id) {
+        if (!window.confirm("Are you sure you want to delete this product?")) return;
+        try {
+            const res = await fetch(`http://localhost:5000/products/delete/${id}`, {
+                method: "DELETE",
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                alert("Listing deleted successfully!");
+                setProducts((prev) => prev.filter((p) => p.ProductID !== id));
+            } else alert(data.error || "Failed to delete listing.");
+        } catch (err) {
+            alert("Server error — try again later.");
+        }
+    }
 
     return (
         <div className="App">
             <header className="App-header">Seller Dashboard</header>
-
             <main>
                 <div className="seller-content">
                     <section className="product-list">
@@ -115,9 +112,7 @@ export default function SellerDashboard() {
                                             className="button"
                                             style={{ backgroundColor: "#b30000" }}
                                             onClick={() => handleDelete(p.ProductID)}
-                                        >
-                                            Delete
-                                    </button>
+                                        >Delete</button>
                                     </div>
                                 </div>
                             ))
@@ -125,8 +120,8 @@ export default function SellerDashboard() {
                             <p>No products listed yet.</p>
                         )}
                     </section>
-                   <section className="order-history">
-                        <h2>Order History</h2>
+                    <section className="order-history">
+                                                <h2>Order History</h2>
                         {orders.length > 0 ? (
                             [...orders].reverse().map((o) => (
                                 <div key={o.OrderID || o.id} className="order-card">
@@ -135,12 +130,9 @@ export default function SellerDashboard() {
                                         {o.buyer || o.BuyerEmail}
                                     </p>
                                     <p>Total: ${o.price || o.Total}</p>
-
-                                    {(o.address || o.Address) && (
-                                        <p>
-                                            <strong>Address:</strong> {o.address || o.Address}
-                                        </p>
-                                    )}
+                                    {o.address || o.Address ? (
+                                        <p><strong>Address:</strong> {o.address || o.Address}</p>
+                                    ) : null}
                                 </div>
                             ))
                         ) : (
@@ -148,72 +140,52 @@ export default function SellerDashboard() {
                         )}
                     </section>
                 </div>
-                <div
-                    className="tooltip"
-                    style={{ position: "fixed", bottom: "180px", right: "20px" }}
-                >
+                <div className="tooltip" style={{ position: "fixed", bottom: "180px", right: "20px" }}>
                     <button
                         className="button"
-                        style={{
-                            borderRadius: "50%",
-                            width: "60px",
-                            height: "60px",
-                            fontSize: "1.5em",
-                        }}
+                        style={{ borderRadius: "50%", width: "60px", height: "60px", fontSize: "1.5em" }}
                         onClick={() => setShowListingForm(true)}
-                    >
-                        +
-                    </button>
+                    >+</button>
                     <span className="tooltip-text">Create New Listing</span>
                 </div>
-
                 <Modal show={showListingForm} onClose={() => setShowListingForm(false)}>
                     <CreateListing
+                        categories={categoryList}
+                        businessID={businessID}
                         onSubmit={(newListing) => {
-                            console.log("Listing created:", newListing);
                             setProducts((prev) => [...prev, newListing]);
                             setShowListingForm(false);
+                            window.location.reload();
                         }}
                     />
                 </Modal>
             </main>
-            <div
-                className="tooltip"
-                style={{ position: "fixed", bottom: "20px", right: "20px" }}
-            >
+            <div className="tooltip" style={{ position: "fixed", bottom: "20px", right: "20px" }}>
                 <button
                     className="button"
-                    style={{
-                        borderRadius: "50%",
-                        width: "60px",
-                        height: "60px",
-                        fontSize: "1.5em",
-                    }}
+                    style={{ borderRadius: "50%", width: "60px", height: "60px", fontSize: "1.5em" }}
                     onClick={() => setShowTicketForm(true)}
-                >
-                    ?
-                </button>
+                >?</button>
                 <span className="tooltip-text">Contact Helpdesk</span>
             </div>
-
             <Modal show={showTicketForm} onClose={() => setShowTicketForm(false)}>
-                <CreateTicket onSubmit={() => setShowTicketForm(false)} />
+                <CreateTicket
+                    sellerEmail={userEmail}
+                    businessID={businessID}
+                    onSubmit={() => setShowTicketForm(false)}
+                />
             </Modal>
             <Modal show={!!editingListing} onClose={() => setEditingListing(null)}>
                 {editingListing && (
                     <EditListing
                         listing={editingListing}
-                        onSubmit={(updated) => {
-                            console.log("Edited listing:", updated);
+                                                onSubmit={(updated) => {
                             setEditingListing(null);
                         }}
                     />
                 )}
             </Modal>
-            <div
-                className="tooltip tooltip-left"
-                style={{ position: "fixed", bottom: "20px", left: "20px" }}
-            >
+            <div className="tooltip tooltip-left" style={{ position: "fixed", bottom: "20px", left: "20px" }}>
                 <button
                     className="button"
                     style={{
@@ -224,9 +196,7 @@ export default function SellerDashboard() {
                         backgroundColor: "#b30000",
                     }}
                     onClick={handleLogout}
-                >
-                    ↩
-                </button>
+                >↩</button>
                 <span className="tooltip-text">Sign Out</span>
             </div>
             <DashboardSwitcher />
