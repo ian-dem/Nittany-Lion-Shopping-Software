@@ -126,13 +126,14 @@ export default function SellerDashboard() {
                             [...orders].reverse().map((o) => (
                                 <div key={o.OrderID || o.id} className="order-card">
                                     <p>
-                                        <strong>{o.product || o.ProductName}</strong> — bought by{" "}
-                                        {o.buyer || o.BuyerEmail}
+                                         <strong>{o.ProductName}</strong> — bought by {o.BuyerEmail}
                                     </p>
-                                    <p>Total: ${o.price || o.Total}</p>
-                                    {o.address || o.Address ? (
-                                        <p><strong>Address:</strong> {o.address || o.Address}</p>
-                                    ) : null}
+                                    <p>Quantity: {o.Quantity}</p>
+                                    <p>Total: ${o.TransactionTotal?.toFixed(2)}</p>
+                                    <p>Status: {o.OrderStatus}</p>
+                                    {o.DateCreated && (
+                                        <p>Date: {new Date(o.DateCreated).toLocaleString()}</p>
+                                    )}
                                 </div>
                             ))
                         ) : (

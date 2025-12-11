@@ -15,12 +15,19 @@ def get_orders_for_seller(email):
     cursor = db.cursor()
     cursor.execute(
         """
-        SELECT o.OrderID, o.Quantity, o.DateCreated, b.BuyerEmail AS buyer,
-               p.Name AS product, p.Price AS price
+        SELECT
+            o.OrderID,
+            o.Quantity,
+            o.DateCreated,
+            p.Name AS ProductName,
+            p.Price AS ProductPrice,
+            t.BuyerEmail AS BuyerEmail,
+            t.Total AS TransactionTotal,
+            t.Status AS OrderStatus
         FROM Orders o
         JOIN Product p ON o.ProductID = p.ProductID
         JOIN Seller s ON p.BusinessID = s.BusinessID
-        JOIN Buyer b ON o.TransactionID = b.BuyerEmail
+        JOIN Transactions t ON o.TransactionID = t.TransactionID
         WHERE s.UserEmail = ?
         ORDER BY o.DateCreated DESC
         """,

@@ -8,3 +8,4 @@ def list_transactions():
     db = get_db()
     rows = db.execute('SELECT * FROM Transactions').fetchall()
     return jsonify([dict(r) for r in rows])
+
