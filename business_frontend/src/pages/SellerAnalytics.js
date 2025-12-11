@@ -37,70 +37,73 @@ export default function BusinessAnalytics() {
         </h2>
       </header>
 
-      {/* Products Per Business */}
-      <section>
-        <h2>Products Per Business</h2>
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Business</th>
-              <th>Product Count</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productsPerBusiness.map(row => (
-              <tr key={row.BusinessID}>
-                <td>{row.BusinessName}</td>
-                <td>{row.product_count}</td>
+      {/* Products Per Business + Revenue Per Business + Monthly Revenue */}
+      <div className="analytics-row">
+        
+        <section className="analytics-section">
+          <h2>Products Per Business</h2>
+          <table border="1" cellPadding="10">
+            <thead>
+              <tr>
+                <th>Business</th>
+                <th>Product Count</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+            </thead>
+            <tbody>
+              {productsPerBusiness.map(row => (
+                <tr key={row.BusinessID}>
+                  <td>{row.BusinessName}</td>
+                  <td>{row.product_count}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
 
-      {/* Revenue Per Business */}
-      <section>
-        <h2>Revenue Per Business</h2>
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Business</th>
-              <th>Revenue ($)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {revenuePerBusiness.map(row => (
-              <tr key={row.BusinessID}>
-                <td>{row.BusinessName}</td>
-                <td>{row.revenue?.toFixed(2)}</td>
+        <section className="analytics-section">
+          <h2>Revenue Per Business</h2>
+          <table border="1" cellPadding="10">
+            <thead>
+              <tr>
+                <th>Business</th>
+                <th>Revenue ($)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+            </thead>
+            <tbody>
+              {revenuePerBusiness.map(row => (
+                <tr key={row.BusinessID}>
+                  <td>{row.BusinessName}</td>
+                  <td>{row.revenue?.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
 
-      {/* Monthly Revenue Per Business */}
-      <section>
-        <h2>Monthly Revenue Per Business</h2>
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Month</th>
-              <th>Business</th>
-              <th>Revenue ($)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {monthlyRevenue.map((row, idx) => (
-              <tr key={idx}>
-                <td>{row.month}</td>
-                <td>{row.BusinessName}</td>
-                <td>{row.revenue?.toFixed(2)}</td>
+        <section className="analytics-section">
+          <h2>Monthly Revenue Per Business</h2>
+          <table border="1" cellPadding="10">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Business</th>
+                <th>Revenue ($)</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+            </thead>
+            <tbody>
+              {monthlyRevenue.map((row, idx) => (
+                <tr key={idx}>
+                  <td>{row.month}</td>
+                  <td>{row.BusinessName}</td>
+                  <td>{row.revenue?.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+      </div>
+
 
       <footer className="App-footer">
         © {new Date().getFullYear()} Team Progress | Penn State

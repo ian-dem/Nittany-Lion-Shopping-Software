@@ -82,6 +82,23 @@ body {
     font-size: 0.9em;
 }
 
+/* analytics */
+.analytics-row {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+}
+
+.analytics-section {
+  min-width: 350px;        
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background: white;
+}
+
 /* Login Section */
 .login-container {
     background-color: #ffffff;
