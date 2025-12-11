@@ -407,6 +407,9 @@ function CategoryBrowser() {
                 <button className="button" onClick={() => addToCart(p)}>
                   Add to Cart
                 </button>
+                <button className="button" onClick={() => openReviewModal(p.ProductID)}>
+                View Reviews
+              </button>
               </div>
             ))}
         </div>
