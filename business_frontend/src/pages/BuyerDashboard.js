@@ -445,6 +445,24 @@ function CategoryBrowser() {
                 <strong>{item.Name}</strong>
                 <p>${item.Price}</p>
                 <p>Qty: {item.Quantity}</p>
+                
+                {/* REMOVE BUTTON */}
+                        <button
+                          className="button"
+                          style={{
+                            backgroundColor: "#b30000",
+                            marginTop: "10px",
+                          }}
+                          onClick={() => {
+                            setCart((prevCart) => {
+                              const updated = { ...prevCart };
+                              delete updated[item.ProductID];
+                              return updated;
+                            });
+                          }}
+                        >
+                          Remove
+                        </button>
               </div>
             ))}
 
