@@ -16,9 +16,17 @@ def get_products_for_seller(email):
     cursor = db.cursor()
     cursor.execute(
         """
-        SELECT p.ProductID, p.Name, p.Description, p.Price, p.Quantity
+        SELECT
+            p.ProductID,
+            p.Name,
+            p.Description,
+            p.Price,
+            p.Quantity,
+            c.CategoryName,
+            p.CategoryID
         FROM Product p
         JOIN Seller s ON p.BusinessID = s.BusinessID
+        LEFT JOIN Category c ON p.CategoryID = c.CategoryID
         WHERE s.UserEmail = ?
         """,
         (email,),
@@ -53,18 +61,7 @@ def create_product():
         print("Error inserting product:", e)
         return jsonify({"success": False, "error": "Database insert failed"}), 500
 
-@products_bp.route("/seller/<email>", methods=["GET"])
-def get_seller_products(email):
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("""
-        SELECT p.ProductID, p.Name, p.Description, p.Quantity, p.Price
-        FROM Product p
-        JOIN Seller s ON p.BusinessID = s.BusinessID
-                           WHERE s.UserEmail = ?
-    """, (email,))
-    products = [dict(row) for row in cursor.fetchall()]
-    return jsonify(products)
+
 
 @products_bp.route("/update/<int:product_id>", methods=["PUT"])
 def update_product(product_id):
