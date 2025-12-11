@@ -91,7 +91,7 @@ def add_review():
     """, (
         rating,
         text,
-        datetime.now().strftime("%m/%d/%Y"),
+        datetime.now().strftime("%Y-%m-%d"),
         product_id,
         buyer_email
     ))
