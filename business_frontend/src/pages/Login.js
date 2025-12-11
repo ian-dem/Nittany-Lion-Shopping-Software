@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Register.js";
+
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -76,7 +76,7 @@ export default function Login() {
                     {error && <p className="error">{error}</p>}
 
                     <div className="register-link">
-                        <p>New user? <span onClick={() => navigate("/register")}>Register here</span></p>
+                        <p>New user? <span onClick={() => navigate("/registerUser")}>Register here</span></p>
                     </div>
                 </div>
             </main>

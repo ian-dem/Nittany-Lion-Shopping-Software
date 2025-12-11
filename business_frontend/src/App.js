@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import SellerDashboard from "./pages/SellerDashboard";
 import BuyerDashboard from "./pages/BuyerDashboard";
 import HelpDeskDashboard from "./pages/HelpDeskDashboard";
-import Register from "./pages/Register";
+
 import RegisterUser from "./pages/RegisterUser";
 import RegisterSeller from "./pages/RegisterSeller";
 import ProductsListPage from "./pages/ProductsListPage";
@@ -45,7 +45,7 @@ function App() {
             <Routes>
                 {/* PUBLIC: login + register */}
                 <Route path="/" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                
                 <Route path="/registerUser" element={<RegisterUser />} />
                 <Route path="/registerSeller" element={<RegisterSeller />} />
                 <Route path="/noselleraccess" element={<NoSellerAccess />} />
