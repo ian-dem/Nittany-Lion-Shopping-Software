@@ -257,6 +257,7 @@ const saveAccountChanges = async () => {
 
   if (data.success) {
     setCart({});
+    setShowCheckoutModal(false);
     alert("Order placed successfully!");
   } else {
     alert("Checkout failed.");

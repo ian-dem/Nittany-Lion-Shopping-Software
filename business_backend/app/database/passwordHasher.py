@@ -53,5 +53,18 @@ def migrate_passwords():
     conn.close()
     print("\nMigration complete! All passwords are now hashed.")
 
+def drop_unhashed():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+                ALTER TABLE Registered_User
+                DROP COLUMN unhashedPassword;
+                   """)
+    
+    print("Drop complete.")
+
+
+
 if __name__ == "__main__":
-    migrate_passwords()
+    # migrate_passwords()
+    drop_unhashed()
