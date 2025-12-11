@@ -1,0 +1,57 @@
+import sqlite3
+from datetime import datetime
+import os
+
+APP_DIR = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+DB_PATH = os.path.join(APP_DIR, "database", "NLionBusiness.db")
+
+def convert_date_format():
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    # Fetch all transactions
+    cur.execute("SELECT TransactionID, Transaction_Date FROM Transactions")
+    rows = cur.fetchall()
+
+    for transaction_id, date_value in rows:
+        if not date_value:
+            continue
+
+        new_date = None
+
+        # CASE 1: MM/DD/YYYY (like 1/10/2024)
+        try:
+            parsed = datetime.strptime(date_value, "%m/%d/%Y")
+            new_date = parsed.strftime("%Y-%m-%d")
+        except ValueError:
+            pass
+
+        # CASE 2: Already ISO format → do nothing
+        try:
+            datetime.strptime(date_value, "%Y-%m-%d")
+            continue
+        except ValueError:
+            pass
+
+        # CASE 3: Already ISO datetime with time → convert to date only
+        try:
+            parsed = datetime.strptime(date_value, "%Y-%m-%d %H:%M:%S")
+            new_date = parsed.strftime("%Y-%m-%d")
+        except ValueError:
+            pass
+
+        # If a new date was formed, update the DB
+        if new_date:
+            print(f"Updating ID {transaction_id}: {date_value} → {new_date}")
+            cur.execute("""
+                UPDATE Transactions
+                SET Transaction_Date = ?
+                WHERE TransactionID = ?
+            """, (new_date, transaction_id))
+
+    conn.commit()
+    conn.close()
+    print("Date normalization complete.")
+
+if __name__ == "__main__":
+    convert_date_format()
