@@ -41,6 +41,12 @@ function BuyerDashboard() {
   const [categoryProducts, setCategoryProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewProduct, setReviewProduct] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [reviewInput, setReviewInput] = useState({ rating: 5, text: "" });
+
+
     const activateSellerAccount = () => {
       navigate("/registerSeller");
     };
@@ -119,6 +125,41 @@ const addToCart = (product) => {
     };
   });
 };
+
+
+// review functionality
+const openReviewModal = async (productId) => {
+  setReviewProduct(productId);
+  setShowReviewModal(true);
+
+  const res = await fetch(`http://localhost:5000/review/product/${productId}`);
+  const data = await res.json();
+  setReviews(data);
+};
+
+async function submitReview() {
+  const res = await fetch(`http://localhost:5000/review/add`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      rating: reviewInput.rating,
+      text: reviewInput.text,
+      product_id: reviewProduct,
+      buyer_email: userEmail
+    })
+  });
+
+  const data = await res.json();
+  if (!data.success) {
+    alert(data.error || "Error submitting review");
+    return;
+  }
+
+  openReviewModal(reviewProduct); // reload reviews
+  setReviewInput({ rating: 5, text: "" });
+}
+
+
 
 // category trees grab
 useEffect(() => {
@@ -294,6 +335,9 @@ function CategoryBrowser() {
               <button className="button" onClick={() => addToCart(p)}>
                 Add to Cart
               </button>
+              <button className="button" onClick={() => openReviewModal(p.ProductID)}>
+                View Reviews
+              </button>
             </div>
           ))}
         </div>
@@ -345,6 +389,10 @@ function CategoryBrowser() {
                   <button className="button" onClick={() => addToCart(p)}>
                     Add to Cart
                   </button>
+                  <button className="button" onClick={() => openReviewModal(p.ProductID)}>
+                    View Reviews
+                  </button>
+        
                 </div>
               ))}
             </div>
@@ -634,8 +682,59 @@ function CategoryBrowser() {
         <span className="tooltip-text">Sign Out</span>
       </div>
 
+      {showReviewModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Product Reviews</h2>
+
+            {/* List Reviews */}
+            {reviews.length === 0 && <p>No reviews yet.</p>}
+            {reviews.map(r => (
+              <div key={r.ReviewID} className="review-card">
+                <strong>{r.Rating}★</strong>
+                <p>{r.Text}</p>
+                <small>{r.BuyerEmail} — {r.DateCreated}</small>
+                <hr />
+              </div>
+            ))}
+
+            {/* Create Review */}
+            <h3>Write a Review</h3>
+
+            <select
+              value={reviewInput.rating}
+              onChange={(e) => setReviewInput({ ...reviewInput, rating: e.target.value })}
+            >
+              {[1, 2, 3, 4, 5].map(n => (
+                <option key={n} value={n}>{n} Stars</option>
+              ))}
+            </select>
+
+            <textarea
+              placeholder="Write your review..."
+              value={reviewInput.text}
+              onChange={(e) => setReviewInput({ ...reviewInput, text: e.target.value })}
+            />
+
+            <button className="button" onClick={submitReview}>Submit</button>
+
+            <button
+              className="button"
+              style={{ backgroundColor: "gray", marginTop: "10px" }}
+              onClick={() => setShowReviewModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+
+
       {buyer && buyer.isSeller && <DashboardSwitcher />}
     </div>
+
+          
   );
 }
 
