@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function CreateListing({ onSubmit }) {
-    const bID = localStorage.getItem("businessID");
+export default function CreateListing({ onSubmit, businessID: passedBusinessID }) {
     const [form, setForm] = useState({
         title: "",
         description: "",
@@ -14,18 +13,17 @@ export default function CreateListing({ onSubmit }) {
     const [error, setError] = useState("");
 
     useEffect(() => {
-    async function loadCategories() {
-        try {
-            const res = await axios.get("http://localhost:5000/category/categories");
-            alert(JSON.stringify(res.data));
-            setCategoryList(res.data || []);
-        } catch (err) {
-            alert("Error loading categories: " + err);
-            setCategoryList([]);
+        async function loadCategories() {
+            try {
+                const res = await axios.get("http://localhost:5000/category");
+                setCategoryList(res.data || []);
+            } catch (err) {
+                console.error("Error loading categories:", err);
+                setCategoryList([]);
+            }
         }
-    }
-    loadCategories();
-}, []);
+        loadCategories();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,10 +34,11 @@ export default function CreateListing({ onSubmit }) {
     async function handleSubmit(e) {
         e.preventDefault();
 
-        const businessID = localStorage.getItem("businessID");
+        const businessID = passedBusinessID || localStorage.getItem("businessID");
+
         if (!businessID) {
             setError("Business ID missing — please log in as a seller first.");
-            alert("Business ID not found. Please log in as a seller.");
+            alert("Business ID not found. Try reloading the dashboard.");
             return;
         }
 
@@ -59,11 +58,10 @@ export default function CreateListing({ onSubmit }) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
-
             const data = await res.json();
 
             if (res.ok && data.success) {
-                alert("Listing created successfully!");
+                                alert("Listing created successfully!");
                 onSubmit(payload);
                 setForm({
                     title: "",
@@ -73,7 +71,7 @@ export default function CreateListing({ onSubmit }) {
                     quantity: "",
                 });
             } else {
-               alert(data.error || "Failed to create listing.");
+                alert(data.error || "Failed to create listing.");
             }
         } catch (err) {
             console.error("Create listing error:", err);
@@ -101,7 +99,6 @@ export default function CreateListing({ onSubmit }) {
                     required
                     style={{ minHeight: "80px" }}
                 />
-                {/* 🧩 Category Dropdown */}
                 <select
                     name="category"
                     value={form.category}
@@ -111,11 +108,10 @@ export default function CreateListing({ onSubmit }) {
                     <option value="">Select Category</option>
                     {categoryList.map((c) => (
                         <option key={c.CategoryID} value={c.CategoryID}>
-                            {c.CategoryName} (ID: {c.CategoryID})
+                            {c.CategoryName}
                         </option>
                     ))}
                 </select>
-
                 <input
                     name="price"
                     type="number"
@@ -133,9 +129,10 @@ export default function CreateListing({ onSubmit }) {
                     onChange={handleChange}
                     required
                 />
-
                 {error && <p className="error">{error}</p>}
-                <button type="submit" className="button">Submit Listing</button>
+                <button type="submit" className="button">
+                    Submit Listing
+                </button>
             </form>
         </div>
     );
