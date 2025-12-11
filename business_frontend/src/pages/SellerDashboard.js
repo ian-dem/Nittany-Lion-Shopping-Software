@@ -136,7 +136,6 @@ export default function SellerDashboard() {
                                     </p>
                                     <p>Total: ${o.price || o.Total}</p>
 
-                                    {/* 🏠 New Address line */}
                                     {(o.address || o.Address) && (
                                         <p>
                                             <strong>Address:</strong> {o.address || o.Address}
@@ -151,13 +150,13 @@ export default function SellerDashboard() {
                 </div>
                 <div
                     className="tooltip"
-                    style={{ position: "fixed", bottom: "100px", right: "20px" }}
+                    style={{ position: "fixed", bottom: "180px", right: "20px" }}
                 >
                     <button
                         className="button"
                         style={{
                             borderRadius: "50%",
-                                                        width: "60px",
+                            width: "60px",
                             height: "60px",
                             fontSize: "1.5em",
                         }}
