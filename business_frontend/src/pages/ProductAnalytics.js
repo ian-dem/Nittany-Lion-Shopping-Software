@@ -38,87 +38,92 @@ export default function AnalyticsDashboard() {
                             </Link></h2>
             </header>
 
-      <section>
-        <h2>Total Units Sold Per Product</h2>
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Total Sold</th>
-            </tr>
-          </thead>
-          <tbody>
-            {totalSold.map(row => (
-              <tr key={row.ProductID}>
-                <td>{row.Name}</td>
-                <td>{row.total_sold}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+            <div className="analytics-row">
 
-      <section>
-        <h2>Revenue Per Product</h2>
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Revenue ($)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {revenue.map(row => (
-              <tr key={row.ProductID}>
-                <td>{row.Name}</td>
-                <td>{row.revenue?.toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
 
-      <section>
-        <h2>Sales Per Month</h2>
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Month</th>
-              <th>Product</th>
-              <th>Units Sold</th>
-            </tr>
-          </thead>
-          <tbody>
-            {soldPerMonth.map((row, idx) => (
-              <tr key={idx}>
-                <td>{row.month}</td>
-                <td>{row.Name}</td>
-                <td>{row.units_sold}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+              <section className="analytics-section">
+                <h2>Total Units Sold Per Product</h2>
+                <table border="1" cellPadding="10">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Total Sold</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {totalSold.map(row => (
+                      <tr key={row.ProductID}>
+                        <td>{row.Name}</td>
+                        <td>{row.total_sold}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </section>
 
-      <section>
-        <h2>Monthly Revenue</h2>
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Month</th>
-              <th>Revenue ($)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {monthlyRevenue.map((row, idx) => (
-              <tr key={idx}>
-                <td>{row.month}</td>
-                <td>{row.revenue?.toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+              <section className="analytics-section">
+                <h2>Revenue Per Product</h2>
+                <table border="1" cellPadding="10">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Revenue ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {revenue.map(row => (
+                      <tr key={row.ProductID}>
+                        <td>{row.Name}</td>
+                        <td>{row.revenue?.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </section>
+
+              <section className="analytics-section">
+                <h2>Sales Per Month</h2>
+                <table border="1" cellPadding="10">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Product</th>
+                      <th>Units Sold</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {soldPerMonth.map((row, idx) => (
+                      <tr key={idx}>
+                        <td>{row.month}</td>
+                        <td>{row.Name}</td>
+                        <td>{row.units_sold}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </section>
+
+              <section className="analytics-section">
+                <h2>Monthly Revenue</h2>
+                <table border="1" cellPadding="10">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Revenue ($)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {monthlyRevenue.map((row, idx) => (
+                      <tr key={idx}>
+                        <td>{row.month}</td>
+                        <td>{row.revenue?.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </section>
+            </div>
+
 
         <footer className="App-footer">
                 © {new Date().getFullYear()} Team Progress | Penn State
