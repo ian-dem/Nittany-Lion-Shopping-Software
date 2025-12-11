@@ -58,3 +58,10 @@ Open your terminal or command prompt and clone the project:
 ```bash
 git clone [Your Repository URL]
 cd [your-project-name]
+```
+
+### 2. Install Dependencies
+```bash
+pip install flask cors flask
+pip install bycrypt
+```
