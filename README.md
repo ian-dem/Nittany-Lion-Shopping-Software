@@ -2,7 +2,7 @@
 
 ## E-Commerce Platform
 
-This project is a comprehensive web platform designed to facilitate transactions between buyers and sellers, featuring separate dashboards, robust user management, and a dedicated backend for order and product handling.
+This project is a prototype e-commerce web platform designed to facilitate transactions between buyers and sellers, featuring separate dashboards, robust user management, and a dedicated backend for order and product handling.
 
 ---
 
@@ -24,18 +24,17 @@ This project is a comprehensive web platform designed to facilitate transactions
     * General/Technical Issues
 
 ### Core Functionality
-* **User Authentication:** Complete **Login** and **Registration** flows for both Users and Sellers.
-* **Post Messaging:** Backend support for messaging related to Users, Business, and Transactions.
+* **User Authentication:** Complete **Login** and **Registration** flows for all Users.
 * **Access Control:** Implemented logic for secure page navigation and user-specific access.
+* * **Support Ticket System:** Handling for users to submit requests to support. Systems to allow support to handle request on the front-end.
 
 ---
 
 ## Technology Stack
 
 * **Backend:** Python, Flask
-* **Frontend:** HTML, CSS, JavaScript (Assumed)
-* **Database:** SQL (Database generation noted)
-* **Tools:** Git/GitHub
+* **Frontend:** React
+* **Database:** SQLite
 
 ---
 
@@ -47,21 +46,22 @@ Follow these instructions to set up and run the project locally.
 
 To run this project, you will need:
 
-* Python 3.x
-* A database system (e.g., SQLite, PostgreSQL, MySQL)
-* `pip` (Python package installer)
+* Python 3.9+
+* Node.js 18+
+* npm
 
-### 1. Cloning the Repository
 
-Open your terminal or command prompt and clone the project:
-
+### Python Dependencies
 ```bash
-git clone [Your Repository URL]
-cd [your-project-name]
+pip install Flask
+pip install flask-cors 
+pip install bcrypt
 ```
 
-### 2. Install Dependencies
+### Node.js packages
 ```bash
-pip install flask cors flask
-pip install bycrypt
+react
+react-dom
+axios
+react-router-dom
 ```
